@@ -8,13 +8,8 @@ import { RegisterUserDTO } from "../dto/input/registeruserdto";
 import { IRegisterModel } from '../models/register';
 import uuid = require('uuid');
 import { compareSync, hashSync } from "bcrypt-nodejs";
-// import { LoginUserDTO } from '../dto/input/loginuserdto';
 import { ITokenModel } from '../models/token';
-// import { ConfirmUserDTO } from '../dto/input/confirmuserdto';
-// import { ResendLinkDTO } from '../dto/input/resendtokendto';
-// import { ForgotPasswordDTO } from '../dto/input/forgotpassword';
-// import { ResetPasswordDTO } from '../dto/input/resetpassworddto';
-// import SGmail = require('@sendgrid/mail');
+import SGmail = require('@sendgrid/mail');
 const baseUrl = process.env.BASE_URL;
 
 export class AuthService extends BaseService {
@@ -58,7 +53,7 @@ export class AuthService extends BaseService {
         let token: ITokenModel = req.app.locals.token({ _userId: result._id, token: tokenData.token });
         await token.save().then(output => {
             if (output) {
-                // this.sendMail(req, res, next, dto.email, output.token, "confirmation");
+                this.sendMail(req, res, next, dto.email, output.token, "confirmation");
                 responseObj = new BasicResponse(Status.CREATED, { token: tokenData.token, id: result._id, msg: `A verification email has been sent to ${ result.secret.email }` });
                 return next();
             } else {
@@ -66,6 +61,17 @@ export class AuthService extends BaseService {
             }
         });
         this.sendResponse(responseObj, res);
+    }
+
+    public async sendMail(req: Request, res: Response, next: NextFunction, email, data, midpath) {
+        SGmail.setApiKey(process.env.SEND_GRID_KEY)
+        const msg = {
+            to: email,
+            from: 'email@photizzo.com',
+            subject: 'Account Verification',
+            html: `<p>Click on this link to activate and confirm your account <a href="${baseUrl}/${midpath}/${data}">${midpath} Link</p>`
+        };
+        SGmail.send(msg);
     }
 
 
