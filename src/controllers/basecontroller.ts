@@ -36,7 +36,7 @@ export class BaseController {
 
 
   protected sendResponse(serviceResponse: BasicResponse, req: Request, res: Response, next: NextFunction): any {
-    var response = {
+    let response = {
       status: serviceResponse.getStatusString(),
       data: serviceResponse.getData()
     }
@@ -64,7 +64,7 @@ export class BaseController {
   }
   protected sendError(req: Request, res: Response, next: NextFunction, data?: Object) {
 
-    var dat = {
+    let dat = {
       status: 400,
       data: data
     }
