@@ -13,10 +13,7 @@ export class ResetPasswordDTO {
         message: 'password is required'
     })
     password: string;
-
-
-
-
+    
     constructor(id?: string, password?: string){
         this.id = id;
         this.password = password;

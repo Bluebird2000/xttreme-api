@@ -7,6 +7,7 @@ import { handleException } from "../aspects/exception";
 import { RegisterUserDTO } from "../dto/input/registeruserdto";
 import { ConfirmUserDTO } from '../dto/input/confirmuserdto';
 import { ResetPasswordDTO } from '../dto/input/resetpassworddto';
+import { ForgotPasswordDTO } from '../dto/input/forgotpassworddto';
 import { IRegisterModel } from '../models/register';
 import uuid = require('uuid');
 import { compareSync, hashSync } from "bcrypt-nodejs";
@@ -107,6 +108,36 @@ export class AuthService extends BaseService {
                     this.sendResponse(new BasicResponse(Status.ERROR), res)
                 })
             })
+        })
+    }
+
+    @handleException()
+    public async resendEmailConfirmationLink(req: Request, res: Response, next: NextFunction) {
+        const { email } = req.body;
+        let dto = new ForgotPasswordDTO(email);
+        let errors = await this.validateDetails(dto, req);
+        if (this.hasErrors(errors)) {
+            this.sendResponse(new BasicResponse(Status.FAILED_VALIDATION, errors), res);
+            return next();
+        }
+        await this.resendToken(req, res, next, dto)
+
+    }
+
+    public async resendToken(req, res, next, dto) {
+        await req.app.locals.register.findOne({ emailHash: this.sha256(dto.email.toLowerCase()) }).then(async user => {
+            if (!user) return this.sendResponse(new BasicResponse(Status.NOT_FOUND, { msg: 'We were unable to find a user with that email.' }), res);
+            if (user.isVerified) return this.sendResponse(new BasicResponse(Status.PRECONDITION_FAILED, { msg: 'This account has already been verified. Please log in.' }), res);
+            const tokenData = this.createToken(user);
+            let token: ITokenModel = req.app.locals.token({ _userId: user._id, token: tokenData.token });
+            await token.save().then(result => {
+                if (!result) return this.sendResponse(new BasicResponse(Status.FAILED_VALIDATION, { msg: "Could not generate token" }), res);
+                this.sendMail(req, res, next, dto.email, result.token, "confirmation")
+                this.sendResponse(new BasicResponse(Status.SUCCESS, { token: tokenData.token, msg: `A verification email has been sent to ${ user.secret.email }`}), res);
+                return next();
+
+            })
+
         })
     }
 
