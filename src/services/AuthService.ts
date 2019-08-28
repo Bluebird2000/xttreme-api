@@ -5,6 +5,7 @@ import { NextFunction, Request, Response } from "express";
 import { validateSync } from "class-validator";
 import { handleException } from "../aspects/exception";
 import { RegisterUserDTO } from "../dto/input/registeruserdto";
+import { ConfirmUserDTO } from '../dto/input/confirmuserdto';
 import { IRegisterModel } from '../models/register';
 import uuid = require('uuid');
 import { compareSync, hashSync } from "bcrypt-nodejs";
@@ -29,8 +30,8 @@ export class AuthService extends BaseService {
     public async saveNewUserData(req: Request, res: Response, next: NextFunction, dto: RegisterUserDTO) {
 
         const encryptedPassword = hashSync(dto.password);
-        let { firstName, lastName, email, wattbankSN } = dto
-        const secret = { firstName, lastName, email: email.toLowerCase(), password: encryptedPassword, wattbankSN, uuid: uuid() }
+        let { firstName, lastName, email } = dto
+        const secret = { firstName, lastName, email: email.toLowerCase(), password: encryptedPassword, uuid: uuid() }
         let register: IRegisterModel = req.app.locals.register({ secret, emailHash: this.sha256(email) });
         let responseObj = null
         await register.save().then(async result => {
@@ -72,6 +73,40 @@ export class AuthService extends BaseService {
             html: `<p>Click on this link to activate and confirm your account <a href="${baseUrl}/${midpath}/${data}">${midpath} Link</p>`
         };
         SGmail.send(msg);
+    }
+
+    @handleException()
+    public async confirmUser(req: Request, res: Response, next: NextFunction) {
+        const { token } = req.body;
+        let dto = new ConfirmUserDTO(token);
+        let errors = await this.validateDetails(dto, req);
+        if (this.hasErrors(errors)) {
+            this.sendResponse(new BasicResponse(Status.FAILED_VALIDATION, errors), res);
+            return next();
+        }
+        await this.verifyAndSaveUser(req, res, next, dto)
+    }
+
+    public async verifyAndSaveUser(req, res, next, dto) {
+        await req.app.locals.token.findOne({ token: dto.token }).then(async token => {
+            if (!token) {
+                return this.sendResponse(new BasicResponse(Status.PRECONDITION_FAILED, { msg: 'Account activation failed. Your verification link may have expired.' }), res);
+            }
+            await req.app.locals.register.findOne({ _id: token._userId }).then(async result => {
+                if (!result) return this.sendResponse(new BasicResponse(Status.NOT_FOUND, { msg: 'No user found.' }), res);
+                if (result.isVerified) return this.sendResponse(new BasicResponse(Status.UNPROCESSABLE_ENTRY, { msg: 'This user has already been verified.' }), res);
+                result.isVerified = true
+                await result.save().then(user => {
+                    if (user) {
+                        return this.sendResponse(new BasicResponse(Status.SUCCESS, { msg: "Account has been verified. Please log in." }), res)
+                    } else {
+                        return this.sendResponse(new BasicResponse(Status.FAILED_VALIDATION), res)
+                    }
+                }).catch(err => {
+                    this.sendResponse(new BasicResponse(Status.ERROR), res)
+                })
+            })
+        })
     }
 
 

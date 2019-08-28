@@ -119,8 +119,8 @@ export class Server {
 
     //enable encryption
 
-    var encKey = process.env.db_encryption_key;
-    var sigKey = process.env.db_signing_key;
+    let encKey = process.env.db_encryption_key;
+    let sigKey = process.env.db_signing_key;
     mongoose.plugin(encrypt, { encryptionKey: encKey, signingKey: sigKey, encryptedFields: ['secret'] });
     //create models
 
@@ -150,8 +150,6 @@ export class Server {
 
     let swaggerUi = require('swagger-ui-express'),
       swaggerDocument = require('../swagger.json');
-
-
       console.log(chalk.default.yellow.bgBlack.bold(`Loading xttreme inventory controller routes on port ${process.env.PORT}`));
       new XttremeInventoryController().loadRoutes('/xttreme', router);
 
