@@ -10,7 +10,7 @@
     "grunt": "grunt",
     "test_test": "NODE_ENV=test mocha -r ts-node/register src/test/**/*.ts --timeout 50000 --exit",
     "start": "node ./bin/www",
-    "test": "./node_modules/.bin/nyc ./node_modules/.bin/mocha src/test/**/*.ts --timeout 30000 --exit",
+    "test": "NODE_ENV=test ./node_modules/.bin/nyc mocha -r ts-node/register src/test/**/*.ts --timeout 30000 --exit",
     "coverage": "./node_modules/.bin/nyc report",
     "compile": "./node_modules/.bin/tsc",
     "coveralls": "nyc report --reporter=text-lcov | coveralls"
