@@ -4,7 +4,7 @@ import { AuthService } from '../services/AuthService';
 
 
 
-export class EnergyDashBoardController extends BaseController {
+export class XttremeInventoryController extends BaseController {
 
   public loadRoutes(prefix: String, router: Router) {
     this.registerUser(prefix, router);
