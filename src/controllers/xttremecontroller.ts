@@ -9,6 +9,7 @@ export class XttremeInventoryController extends BaseController {
   public loadRoutes(prefix: String, router: Router) {
     this.registerUser(prefix, router);
     this.confirmUser(prefix, router);
+    this.resetPassword(prefix, router);
 
   }
 
@@ -23,6 +24,12 @@ export class XttremeInventoryController extends BaseController {
     router.post(prefix + "/auth/confirmation", (req: Request, res: Response, next: NextFunction) => {
       new AuthService().confirmUser(req, res, next);
 
+    });
+  }
+
+  public resetPassword(prefix: String, router: Router): any {
+    router.post(prefix + "/auth/reset_password", (req: Request, res: Response, next: NextFunction) => {
+      new AuthService().processResetPassword(req, res, next);
     });
   }
 

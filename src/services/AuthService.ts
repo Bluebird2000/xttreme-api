@@ -6,6 +6,7 @@ import { validateSync } from "class-validator";
 import { handleException } from "../aspects/exception";
 import { RegisterUserDTO } from "../dto/input/registeruserdto";
 import { ConfirmUserDTO } from '../dto/input/confirmuserdto';
+import { ResetPasswordDTO } from '../dto/input/resetpassworddto';
 import { IRegisterModel } from '../models/register';
 import uuid = require('uuid');
 import { compareSync, hashSync } from "bcrypt-nodejs";
@@ -106,6 +107,34 @@ export class AuthService extends BaseService {
                     this.sendResponse(new BasicResponse(Status.ERROR), res)
                 })
             })
+        })
+    }
+
+    public async processResetPassword(req, res, next) {
+        const { id, password } = req.body;
+        let dto = new ResetPasswordDTO(id, password);
+        let errors = await this.validateDetails(dto, req);
+        if (this.hasErrors(errors)) {
+            this.sendResponse(new BasicResponse(Status.FAILED_VALIDATION, errors), res);
+            return next();
+        }
+
+        await this.resetPassword(req, res, next, dto)
+    }
+
+
+
+    async resetPassword(req, res, next, dto) {
+        await req.app.locals.register.findOne({ _id: dto.id }).then(async user => {
+            if (!user) return this.sendResponse(new BasicResponse(Status.NOT_FOUND, { msg: 'We were unable to find a user for this account.' }), res);
+            user.password = hashSync(dto.password);
+
+            await user.save().then(result => {
+                if (!result) return this.sendResponse(new BasicResponse(Status.FAILED_VALIDATION, { msg: "Could not reset your password" }), res);
+                this.sendResponse(new BasicResponse(Status.SUCCESS, { msg: "You have successfully changed your password" }), res);
+                return next();
+            })
+
         })
     }
 
