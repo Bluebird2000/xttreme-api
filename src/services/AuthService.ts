@@ -8,6 +8,7 @@ import { RegisterUserDTO } from "../dto/input/registeruserdto";
 import { ConfirmUserDTO } from '../dto/input/confirmuserdto';
 import { ResetPasswordDTO } from '../dto/input/resetpassworddto';
 import { ForgotPasswordDTO } from '../dto/input/forgotpassworddto';
+import { LoginUserDTO } from '../dto/input/loginuserdto';
 import { IRegisterModel } from '../models/register';
 import uuid = require('uuid');
 import { compareSync, hashSync } from "bcrypt-nodejs";
@@ -154,8 +155,7 @@ export class AuthService extends BaseService {
     }
 
 
-
-    async resetPassword(req, res, next, dto) {
+    public async resetPassword(req, res, next, dto) {
         await req.app.locals.register.findOne({ _id: dto.id }).then(async user => {
             if (!user) return this.sendResponse(new BasicResponse(Status.NOT_FOUND, { msg: 'We were unable to find a user for this account.' }), res);
             user.password = hashSync(dto.password);
@@ -167,6 +167,48 @@ export class AuthService extends BaseService {
             })
 
         })
+    }
+
+
+    @handleException()
+    public async loginUser(req: Request, res: Response, next: NextFunction) {
+        const { username, password } = req.body;
+        let dto = new LoginUserDTO(username, password);
+        let responseObj = null
+        let errors = await this.validateDetails(dto, req);
+        if (this.hasErrors(errors)) {
+            this.sendResponse(new BasicResponse(Status.FAILED_VALIDATION, errors), res);
+            return next();
+        }
+        await req.app.locals.register.findOne({ emailHash: this.sha256(dto.username.toLowerCase()) }).then(async result => {
+            if (result) {
+                await this.processUserLoginAction(res, next, dto, result);
+            } else {
+                responseObj = new BasicResponse(Status.FAILED_VALIDATION, { msg: 'email does not exist' });
+            }
+        }).catch(err => {
+            responseObj = new BasicResponse(Status.ERROR, err);
+        });
+        this.sendResponse(responseObj, res);
+
+    }
+
+
+    public async processUserLoginAction(res, next, dto, result) {
+        let responseObj = null;
+        if (compareSync(dto.password, result.secret.password)) {
+            if (!result.isVerified) {
+                responseObj = new BasicResponse(Status.PRECONDITION_FAILED, { msg: 'Your account has not been verified.' });
+            } else {
+                const tokenData = this.createToken(result);
+                responseObj = new BasicResponse(Status.SUCCESS, { result, tokenData });
+            }
+        } else {
+            responseObj = new BasicResponse(Status.FAILED_VALIDATION, { msg: 'email or password is incorrect' });
+        }
+
+        this.sendResponse(responseObj, res);
+
     }
 
 
