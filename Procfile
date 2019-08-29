@@ -1,1 +1,1 @@
-web: npm startweb: npm startweb: npm start
+web: npm start
