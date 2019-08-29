@@ -6,6 +6,9 @@ import { NextFunction, Request, Response } from "express";
 import * as jwt from 'jsonwebtoken';
 import { ITokenData } from '../interfaces/tokenInterfaces';
 
+import * as dotenv from 'dotenv';
+dotenv.config();
+
 
 
 

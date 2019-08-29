@@ -20,8 +20,8 @@ export class AuthService extends BaseService {
 
     @handleException()
     public async registerUser(req: Request, res: Response, next: NextFunction) {
-        const { firstName, lastName, email, password, wattbankSN } = req.body;
-        let dto = new RegisterUserDTO(firstName, lastName, email, password, wattbankSN);
+        const { firstName, lastName, email, password } = req.body;
+        let dto = new RegisterUserDTO(firstName, lastName, email, password);
         let errors = await this.validateNewUserDetails(dto, req);
         if (this.hasErrors(errors)) {
             this.sendResponse(new BasicResponse(Status.FAILED_VALIDATION, errors), res);

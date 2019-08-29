@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { verify } from "jsonwebtoken";
 import { BasicResponse } from "../dto/output/basicresponse";
-
+import * as dotenv from 'dotenv';
+dotenv.config();
 /**
  * Constructor
  *

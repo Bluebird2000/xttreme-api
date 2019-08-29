@@ -30,20 +30,14 @@ export class RegisterUserDTO {
     password: string;
 
     @IsOptional()
-    wattbankSN: string;
-
-    @IsOptional({
-        "message": "baseUrl is required"  
-      })
     @IsUrl()
     baseUrl: string;
 
-    constructor(firstName?: string, lastName?: string, email?: string, password?: string, wattbankSN?:string, baseUrl?: string){
+    constructor(firstName?: string, lastName?: string, email?: string, password?: string, baseUrl?: string){
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
-        this.wattbankSN = wattbankSN;
         this.baseUrl = baseUrl;
     }
 }
