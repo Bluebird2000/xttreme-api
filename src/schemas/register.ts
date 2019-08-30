@@ -28,7 +28,7 @@ export let registerSchema: Schema = new Schema({
     type: String,
     required: true
   },
-  tenant: {
+  managementId: {
     type: String,
     required: true
   },
