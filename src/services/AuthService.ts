@@ -35,7 +35,7 @@ export class AuthService extends BaseService {
         const encryptedPassword = hashSync(dto.password);
         let { firstName, lastName, email } = dto
         const secret = { firstName, lastName, email: email.toLowerCase(), password: encryptedPassword, uuid: uuid() }
-        let register: IRegisterModel = req.app.locals.register({ secret, emailHash: this.sha256(email) });
+        let register: IRegisterModel = req.app.locals.register({ secret, emailHash: this.sha256(email), managementId: uuid() });
         let responseObj = null
         await register.save().then(async result => {
             if (result) {
