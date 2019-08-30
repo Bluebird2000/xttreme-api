@@ -34,8 +34,11 @@ export class AuthService extends BaseService {
 
         const encryptedPassword = hashSync(dto.password);
         let { firstName, lastName, email } = dto
-        const secret = { firstName, lastName, email: email.toLowerCase(), password: encryptedPassword, uuid: uuid() }
-        let register: IRegisterModel = req.app.locals.register({ secret, emailHash: this.sha256(email), managementId: uuid() });
+        const secret = { firstName, lastName, email: email.toLowerCase(), password: encryptedPassword }
+        const twoCharacterStr = await this.getTwoRandomAlphabeticStrAsManagementIdentifiers();
+        const timestampInMilliSeconds = Date.now();
+        const uniqueManagementref = `${twoCharacterStr}-${timestampInMilliSeconds}-${uuid()}`;
+        let register: IRegisterModel = req.app.locals.register({ secret, emailHash: this.sha256(email), userId: uuid(), managementId: uniqueManagementref });
         let responseObj = null
         await register.save().then(async result => {
             if (result) {
@@ -231,6 +234,16 @@ export class AuthService extends BaseService {
 
     hasErrors(errors) {
         return !(errors === undefined || errors.length == 0);
+    }
+
+    getTwoRandomAlphabeticStrAsManagementIdentifiers(){
+        let randomString = '';
+        let randomAscii;
+        for(let i = 0; i < 2; i++) {
+            randomAscii = Math.floor((Math.random() * 25) + 65);
+            randomString += String.fromCharCode(randomAscii);
+        }
+        return randomString;
     }
 
 

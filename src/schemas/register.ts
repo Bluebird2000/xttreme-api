@@ -19,16 +19,16 @@ export let registerSchema: Schema = new Schema({
       type: String,
       required: true
     },
-    uuid: {
-      type: String,
-      required: true
-    },
   },
   emailHash: {
     type: String,
     required: true
   },
   managementId: {
+    type: String,
+    required: true
+  },
+  userId: {
     type: String,
     required: true
   },
