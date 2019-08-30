@@ -28,6 +28,10 @@ export let registerSchema: Schema = new Schema({
     type: String,
     required: true
   },
+  tenant: {
+    type: String,
+    required: true
+  },
   isVerified: {
     type: Boolean, default: false
   },
