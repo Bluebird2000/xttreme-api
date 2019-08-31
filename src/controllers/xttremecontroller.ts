@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { BaseController } from "./basecontroller";
 import { AuthService } from '../services/AuthService';
+import { CategoryService } from '../services/CategoryService';
 
 
 
@@ -12,6 +13,7 @@ export class XttremeInventoryController extends BaseController {
     this.resendEmailConfirmationLink(prefix, router);
     this.resetPassword(prefix, router);
     this.loginUser(prefix, router);
+    this.createInventoryCategory(prefix, router);
 
   }
 
@@ -46,6 +48,16 @@ export class XttremeInventoryController extends BaseController {
     router.post(prefix + "/auth/login", (req: Request, res: Response, next: NextFunction) => {
       new AuthService().loginUser(req, res, next);
     });
+  }
+  
+  // APP
+
+  public createInventoryCategory(prefix: String, router: Router): any {
+    router.post(prefix + "/category", [this.authorize.bind(this)], (req: Request, res: Response, next: NextFunction) => {
+        new CategoryService().createInventoryCategory(req, res, next ,this.user_id, this.user_managementId
+        );
+      }
+    );
   }
 
   

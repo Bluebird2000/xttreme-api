@@ -20,8 +20,10 @@ export class BaseController {
 
   protected user_firstname = null;
   protected user_lastname = null;
-  protected user_id = null;
   protected user_email = null;
+  protected user_managementId = null;
+  protected user_id = null;
+
 
   protected initPagination(req: Request, post: boolean) {
     let obj: any = post ? req.body : req.query;
@@ -98,8 +100,9 @@ export class BaseController {
   protected setUserVariables(user) {
     this.user_firstname = user.firstname;
     this.user_lastname = user.lastname;
-    this.user_id = user.userId;
     this.user_email = user.email;
+    this.user_managementId = user.organisationId;
+    this.user_id = user.userId;
   }
 
 }
