@@ -1,3 +1,5 @@
+import * as pug from 'pug';
+import htmlToText from 'html-to-text';
 import { BaseService } from "./BaseService";
 import { BasicResponse } from "../dto/output/basicresponse";
 import { Status } from '../dto/enums/statusenum';
@@ -71,12 +73,15 @@ export class AuthService extends BaseService {
     }
 
     public async sendMail(req: Request, res: Response, next: NextFunction, email, data, midpath) {
-        SGmail.setApiKey(process.env.SEND_GRID_KEY)
+        SGmail.setApiKey(process.env.SEND_GRID_KEY);
+        // const html = pug.renderFile(`${__dirname}/../views/email/welcome.pug`)
         const msg = {
             to: email,
             from: 'email@photizzo.com',
             subject: 'Account Verification',
+            // html,
             html: `<p>Click on this link to activate and confirm your account <a href="${baseUrl}/${midpath}/${data}">${midpath} Link</p>`
+            // text: htmlToText.fromString(html)
         };
         SGmail.send(msg);
     }
