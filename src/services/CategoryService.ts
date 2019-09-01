@@ -32,14 +32,22 @@ export class CategoryService extends BaseService {
     }
     
     
-    @trailNewRecord('inventoryCategory')
-    async saveNewCategoryData(req: Request, res: Response, nextt: NextFunction,  userId: string, managementId: string,  dto: CreateInventoryCategoryDTO) {
+    async saveNewCategoryData(req: Request, res: Response, next: NextFunction,  userId: string, managementId: string, dto: CreateInventoryCategoryDTO) {
         const { name, description } = dto;
-        console.log(11, dto);
         const secret = { name, description };
-        let inventoryCategory: IInventoryCategoryModel = req.app.locals.inventoryCategory(
-            { secret, userId: userId, managementId: managementId, nameHash: this.sha256(name) } );
-        return inventoryCategory;
+        let category: IInventoryCategoryModel = req.app.locals.category({ secret, userId, managementId, nameHash: this.sha256(name) });
+        let responseObj = null
+        await category.save().then(async result => {
+            if (result) {
+              this.sendResponse(new BasicResponse(Status.CREATED, result), res);
+            } else {
+              responseObj = new BasicResponse(Status.FAILED_VALIDATION);
+            }
+        }).catch(err => {
+            responseObj = new BasicResponse(Status.ERROR, err);
+        });
+
+        this.sendResponse(responseObj, res);
 
     }
 
