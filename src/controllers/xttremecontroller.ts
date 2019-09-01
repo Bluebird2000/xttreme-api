@@ -3,10 +3,7 @@ import { BaseController } from "./basecontroller";
 import { AuthService } from '../services/AuthService';
 import { CategoryService } from '../services/CategoryService';
 
-
-
 export class XttremeInventoryController extends BaseController {
-
   public loadRoutes(prefix: String, router: Router) {
     this.registerUser(prefix, router);
     this.confirmUser(prefix, router);
@@ -16,7 +13,6 @@ export class XttremeInventoryController extends BaseController {
     this.createInventoryCategory(prefix, router);
 
   }
-
 
   public registerUser(prefix: String, router: Router): any {
     router.post(prefix + "/auth/register", (req: Request, res: Response, next: NextFunction) => {
@@ -49,18 +45,15 @@ export class XttremeInventoryController extends BaseController {
       new AuthService().loginUser(req, res, next);
     });
   }
-  
-  // APP
 
   public createInventoryCategory(prefix: String, router: Router): any {
     router.post(prefix + "/category", [this.authorize.bind(this)], (req: Request, res: Response, next: NextFunction) => {
-        new CategoryService().createInventoryCategory(req, res, next ,this.user_id, this.user_managementId
+        new CategoryService().createInventoryCategory(req, res, next, this.user_id, this.user_managementId
         );
       }
     );
   }
 
-  
 
   public authorize(req: Request, res: Response, next: NextFunction) {
     if (!this.authorized(req, res, next)) {

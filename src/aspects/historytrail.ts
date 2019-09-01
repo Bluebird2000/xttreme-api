@@ -242,7 +242,9 @@ export const trailNewRecord = (schemaName: string): any =>
     let userInfo = request.app.locals.userobj;
     let description = `${userInfo.firstname} ${userInfo.lastname} added a new record`;
     meta.result.then(model => {
+      console.log('inside model', model);
       model.save().then(entity => {
+        console.log('inside entity', entity);
         if (entity) {
           saveActivity(description, schemaName, null, entity.secret, "create", request);
 
