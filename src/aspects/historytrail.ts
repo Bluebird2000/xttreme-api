@@ -91,7 +91,7 @@ export const simpleList = (schemaName: string): any =>
     let response = meta.args[1];
     let next = meta.args[2];
 
-    const tenantId = request.app.locals.userobj.organisationId;
+    const managementId = request.app.locals.userobj.managementId;
 
     let offset = request.query.offset;
     let limit = request.query.limit;
@@ -107,14 +107,14 @@ export const simpleList = (schemaName: string): any =>
     let skip = offset * limit;
     let count = 0;
     await request.app.locals[schemaName]
-      .count({ tenantId: tenantId })
+      .count({ managementId: managementId })
       .then(result => {
         count = result;
       });
 
     let base;
      let id = request.params.id;
-      base = request.app.locals[schemaName].findById(id).populate('properties.id').populate('requisitionCartItems.itemId').populate('procurement_cart.itemId').populate('item_object_data.itemId').populate('product_id')
+      base = request.app.locals[schemaName].findById(id)
     base
       .skip(skip)
       .limit(parseInt(limit))
