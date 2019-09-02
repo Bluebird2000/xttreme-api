@@ -110,7 +110,11 @@ export class BaseService {
         const secret = process.env.USER_JWT_SECRET;
         const dataStoredInToken = {
             _id: user._id,
-            email: user.email
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            managementId: user.managementId,
+            userId: user.userId,
         };
     
         const secure:boolean= true
