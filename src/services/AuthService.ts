@@ -217,28 +217,7 @@ export class AuthService extends BaseService {
         this.sendResponse(responseObj, res);
 
     }
-
-
-    async validateNewUserDetails(dto: RegisterUserDTO, req: Request) {
-        let errors = validateSync(dto, { validationError: { target: false } });
-        if (this.hasErrors(errors)) {
-            return errors;
-        }
-        await req.app.locals.register.find({ emailHash: this.sha256(dto.email.toLowerCase()) }).then(result => {
-            if (result && result[0] && result[0]._id && result[0]._id != req.params.id) {
-                errors.push(this.getDuplicateEmailError(dto.email.toLowerCase()));
-            } else if (result && result[0] && result[0]._id && !req.params.id) {
-                errors.push(this.getDuplicateEmailError(dto.email.toLowerCase()));
-            }
-        });
-
-        return errors;
-    }
-
-
-    hasErrors(errors) {
-        return !(errors === undefined || errors.length == 0);
-    }
+    
 
     getTwoRandomAlphabeticStrAsManagementIdentifiers(){
         let randomString = '';
@@ -248,6 +227,28 @@ export class AuthService extends BaseService {
             randomString += String.fromCharCode(randomAscii);
         }
         return randomString;
+    }
+
+
+    async validateNewUserDetails(dto: RegisterUserDTO, req: Request) {
+        let errors = validateSync(dto, { validationError: { target: false } });
+        if (this.hasErrors(errors)) {
+            return errors;
+        }
+        // await req.app.locals.register.find({ emailHash: this.sha256(dto.email.toLowerCase()) }).then(result => {
+        //     if (result && result[0] && result[0]._id && result[0]._id != req.params.id) {
+        //         errors.push(this.getDuplicateEmailError(dto.email.toLowerCase()));
+        //     } else if (result && result[0] && result[0]._id && !req.params.id) {
+        //         errors.push(this.getDuplicateEmailError(dto.email.toLowerCase()));
+        //     }
+        // });
+
+        return errors;
+    }
+
+
+    hasErrors(errors) {
+        return !(errors === undefined || errors.length == 0);
     }
 
 
