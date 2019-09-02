@@ -29,11 +29,10 @@ export class AuthService extends BaseService {
             this.sendResponse(new BasicResponse(Status.FAILED_VALIDATION, errors), res);
             return next();
         }
-        await this.saveNewUserData(req, res, next, dto)
+        await this.processNewUserRegistrationData(req, res, next, dto)
     }
 
-    public async saveNewUserData(req: Request, res: Response, next: NextFunction, dto: RegisterUserDTO) {
-
+    public async processNewUserRegistrationData(req: Request, res: Response, next: NextFunction, dto: RegisterUserDTO) {
         const encryptedPassword = hashSync(dto.password);
         let { firstName, lastName, email } = dto
         const secret = { firstName, lastName, email: email.toLowerCase(), password: encryptedPassword }
@@ -44,7 +43,7 @@ export class AuthService extends BaseService {
         let responseObj = null
         await register.save().then(async result => {
             if (result) {
-                await this.processRequestAfterSuccessfulValidation(req, res, next, dto, result)
+                await this.saveNewUserData(req, res, next, dto, result)
             } else {
                 responseObj = new BasicResponse(Status.FAILED_VALIDATION);
             }
@@ -56,7 +55,7 @@ export class AuthService extends BaseService {
     }
 
 
-    public async processRequestAfterSuccessfulValidation(req, res, next, dto, result ) {
+    public async saveNewUserData(req, res, next, dto, result ) {
         let responseObj = null
         const tokenData = this.createToken(result);
         let token: ITokenModel = req.app.locals.token({ _userId: result._id, token: tokenData.token });
@@ -77,7 +76,7 @@ export class AuthService extends BaseService {
         // const html = pug.renderFile(`${__dirname}/../views/email/welcome.pug`)
         const msg = {
             to: email,
-            from: 'email@photizzo.com',
+            from: 'email@xttreme.com',
             subject: 'Account Verification',
             // html,
             html: `<p>Click on this link to activate and confirm your account <a href="${baseUrl}/${midpath}/${data}">${midpath} Link</p>`
@@ -95,10 +94,10 @@ export class AuthService extends BaseService {
             this.sendResponse(new BasicResponse(Status.FAILED_VALIDATION, errors), res);
             return next();
         }
-        await this.verifyAndSaveUser(req, res, next, dto)
+        await this.processUserVerificationRequest(req, res, next, dto)
     }
 
-    public async verifyAndSaveUser(req, res, next, dto) {
+    public async processUserVerificationRequest(req, res, next, dto) {
         await req.app.locals.token.findOne({ token: dto.token }).then(async token => {
             if (!token) {
                 return this.sendResponse(new BasicResponse(Status.PRECONDITION_FAILED, { msg: 'Account activation failed. Your verification link may have expired.' }), res);

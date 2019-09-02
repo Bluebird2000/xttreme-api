@@ -91,6 +91,11 @@ export class BaseService {
         console.log(chalk.default.blue.bgRed.bold(error));
     }
 
+
+    protected getDuplicateNameError(name: string): any {
+        return { property: "name", constraints: { unique: "name must be unique" }, value: name };
+    }
+
     protected getDuplicateError(name: string): any {
         return { 'property': 'name', 'constraints': { 'unique': 'must be unique' }, value: name };
     }
@@ -128,7 +133,7 @@ export class BaseService {
    
 
     protected createCookie(tokenData) {
-        return `Photizzo=${tokenData.token}; Max-Age=${tokenData.expiresIn}`;
+        return `xttreme=${tokenData.token}; Max-Age=${tokenData.expiresIn}`;
     }
 
 }
