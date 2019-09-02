@@ -11,6 +11,7 @@ export class XttremeInventoryController extends BaseController {
     this.resetPassword(prefix, router);
     this.loginUser(prefix, router);
     this.createInventoryCategory(prefix, router);
+    this.listInventoryCategories(prefix, router);
 
   }
 
@@ -53,6 +54,15 @@ export class XttremeInventoryController extends BaseController {
       }
     );
   }
+
+  public listInventoryCategories(prefix: String, router: Router): any {
+    router.get( prefix + "/category", [this.authorize.bind(this)], (req: Request, res: Response, next: NextFunction) => { new CategoryService().listInventoryCategories( req, res, next, this.user_id,this.user_managementId
+        );
+      }
+    );
+  }
+
+
 
 
   public authorize(req: Request, res: Response, next: NextFunction) {
