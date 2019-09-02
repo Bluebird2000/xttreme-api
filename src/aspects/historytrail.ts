@@ -107,14 +107,13 @@ export const simpleList = (schemaName: string): any =>
     let skip = offset * limit;
     let count = 0;
     await request.app.locals[schemaName]
-      .count({ managementId: managementId })
+      .count({ _id: request.params.id, managementId })
       .then(result => {
         count = result;
       });
 
     let base;
-     let id = request.params.id;
-      base = request.app.locals[schemaName].findById(id)
+      base = request.app.locals[schemaName].find({ _id: request.params.id, managementId })
     base
       .skip(skip)
       .limit(parseInt(limit))
