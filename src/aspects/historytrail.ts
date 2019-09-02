@@ -37,13 +37,13 @@ function isNotANumber(param) {
 
 
 
-export const simpleList = (schemaName: string, populate?: string): any =>
+export const simpleList = (schemaName: string): any =>
   afterMethod(async meta => {
     let request = meta.args[0];
     let response = meta.args[1];
     let next = meta.args[2];
 
-    const tenantId = request.app.locals.userobj.organisationId;
+    const managementId = request.app.locals.userobj.managementId;
 
     let offset = request.query.offset;
     let limit = request.query.limit;
@@ -58,21 +58,11 @@ export const simpleList = (schemaName: string, populate?: string): any =>
 
     let skip = offset * limit;
     let count = 0;
-    let query = {
-      path: 'childCategoryAttached ItemAttachedToThisCategory', populate: {
-      path: 'childCategoryAttached ItemAttachedToThisCategory', populate: {
-      path: 'childCategoryAttached ItemAttachedToThisCategory', populate: {
-      path: 'childCategoryAttached ItemAttachedToThisCategory'}}}
-    }
-    
-    await request.app.locals[schemaName].count({ tenantId: tenantId }).then(result => { count = result });
+    await request.app.locals[schemaName].count({ managementId: managementId }).then(result => { count = result });
 
     let base;
-    if (populate) {
-      base = request.app.locals[schemaName].find({ tenantId: tenantId }).populate(populate).populate('parentCategoryId').populate(query)
-    } else {
-      base = request.app.locals[schemaName].find({ tenantId: tenantId }).populate(populate).populate('parentCategoryId').populate(query)
-    }
+      base = request.app.locals[schemaName].find({ managementId: managementId })
+    
     base
       .skip(skip)
       .limit(parseInt(limit))
