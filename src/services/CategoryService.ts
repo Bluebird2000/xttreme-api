@@ -59,40 +59,13 @@ export class CategoryService extends BaseService {
           return errors;
         }
     
-        // await req.app.locals.inventoryCategory.find({ _id: req.body.parentCategoryId }).then(result => {
-        //   if (!result) errors.push(this.getParentCategoryNameError(dto.parentCategoryId));
-        // }).catch(err => {
-        //   errors.push(this.getParentCategoryNameError(dto.parentCategoryId))
-        // });
-    
-        // if (dto.properties !== undefined) {
-        //   dto.properties.forEach(property => {
-        //     if (property.name === null || property.name === undefined) {
-        //       errors.push(this.getPropertyNameRequiredError(property));
-        //     }
-    
-        //     if (property.type === null || property.type === undefined) {
-        //       errors.push(this.getPropertyTypeRequiredError(property))
-        //     }
-    
-        //     if (property.type === 'dropdown' && (property.options === null || (property.options === undefined))) {
-        //       errors.push(this.getPropertyOptionsRequiredErrors(property));
-    
-        //     } else if (property.type === 'checkbox' && (property.options === null || (property.options === undefined))) {
-        //       errors.push(this.getPropertyOptionsRequiredErrors(property));
-        //     } else if (property.type === 'radiobutton' && (property.options === null || (property.options === undefined))) {
-        //       errors.push(this.getPropertyOptionsRequiredErrors(property));
-        //     }
-        //   });
-        // }
-    
-        // await req.app.locals.inventoryCategory.find({ nameHash: this.sha256(req.body.name), managementId }).then(result => {
-        //   if (result && result[0] && result[0]._id && result[0]._id != req.params.id) {
-        //     errors.push(this.getItemNameDuplicateError(dto.name));
-        //   } else if (result && result[0] && result[0]._id && !req.params.id) {
-        //     errors.push(this.getItemNameDuplicateError(dto.name));
-        //   }
-        // });
+        await req.app.locals.category.find({ nameHash: this.sha256(req.body.name), managementId }).then(result => {
+          if (result && result[0] && result[0]._id && result[0]._id != req.params.id) {
+            errors.push(this.getDuplicateNameError(dto.name));
+          } else if (result && result[0] && result[0]._id && !req.params.id) {
+            errors.push(this.getDuplicateNameError(dto.name));
+          }
+        });
         return errors;
       }    
 
