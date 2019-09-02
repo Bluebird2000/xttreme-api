@@ -87,6 +87,7 @@ export class BaseController {
     try {
       const secret = process.env.USER_JWT_SECRET;
       let user: any = verify(token, secret);
+      console.log('Base controller', user);
       this.setUserVariables(user)
       return true;
 
@@ -98,10 +99,10 @@ export class BaseController {
   }
 
   protected setUserVariables(user) {
-    this.user_firstname = user.firstname;
-    this.user_lastname = user.lastname;
+    this.user_firstname = user.firstName;
+    this.user_lastname = user.lastName;
     this.user_email = user.email;
-    this.user_managementId = user.organisationId;
+    this.user_managementId = user.managementId;
     this.user_id = user.userId;
   }
 
