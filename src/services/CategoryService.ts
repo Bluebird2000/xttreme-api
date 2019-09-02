@@ -5,7 +5,7 @@ import { NextFunction, Request, Response } from "express";
 import { IInventoryCategoryModel } from "../models/category";
 import { CreateInventoryCategoryDTO } from "../dto/input/createcategorydto";
 import { validateSync, validate } from "class-validator";
-import { trailNewRecord, handleException, simpleList, trailUpdatedRecord } from "../aspects/historytrail";
+import { trailNewRecord, handleException, simpleList, singleList, trailUpdatedRecord } from "../aspects/historytrail";
 import { Types } from "mongoose";
 
 export class CategoryService extends BaseService {
@@ -55,6 +55,11 @@ export class CategoryService extends BaseService {
   { }
 
 
+  @singleList('category')
+  public async getCategoryById(req: Request, res: Response, next: NextFunction, userId: string, tenantId: string)
+   { }
+
+   
   async validateNewInvCategoryDetails(dto: CreateInventoryCategoryDTO, req: Request, managementId: string) {
 
       let errors = validateSync(dto, { validationError: { target: false } });
