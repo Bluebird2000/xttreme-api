@@ -63,8 +63,15 @@ export class XttremeInventoryController extends BaseController {
     );
   }
 
-    public getCategoryById(prefix: String, router: Router): any {
+  public getCategoryById(prefix: String, router: Router): any {
     router.get( prefix + "/category/:id", [this.authorize.bind(this)], (req: Request, res: Response, next: NextFunction) => { new CategoryService().getCategoryById( req, res, next, this.user_id,this.user_managementId
+        );
+      }
+    );
+  } 
+
+  public updateCategoryById(prefix: String, router: Router): any {
+    router.get( prefix + "/category/:id", [this.authorize.bind(this)], (req: Request, res: Response, next: NextFunction) => { new CategoryService().updateCategoryById( req, res, next, this.user_id,this.user_managementId
         );
       }
     );

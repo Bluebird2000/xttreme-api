@@ -4,6 +4,7 @@ import { Status } from "../dto/enums/statusenum";
 import { NextFunction, Request, Response } from "express";
 import { IInventoryCategoryModel } from "../models/category";
 import { CreateInventoryCategoryDTO } from "../dto/input/createcategorydto";
+import { UpdateCategoryDTO } from "../dto/input/updatecategorydto";
 import { validateSync, validate } from "class-validator";
 import { trailNewRecord, handleException, simpleList, singleList, trailUpdatedRecord } from "../aspects/historytrail";
 import { Types } from "mongoose";
@@ -56,8 +57,48 @@ export class CategoryService extends BaseService {
 
 
   @singleList('category')
-  public async getCategoryById(req: Request, res: Response, next: NextFunction, userId: string, tenantId: string)
+  public async getCategoryById(req: Request, res: Response, next: NextFunction, userId: string, managementId: string)
    { }
+
+
+  @handleException()
+  public async updateCategoryById(req: Request, res: Response, next: NextFunction, userId: string, managementId: string) {
+     const { name, description } = req.body;
+ 
+     let dto = new UpdateCategoryDTO(name, description);
+ 
+       let errors = await this.validateNewInvCategoryDetails(dto, req, managementId);
+       if (this.hasErrors(errors)) {
+         this.sendResponse(new BasicResponse(Status.FAILED_VALIDATION, errors), res);
+         return next();
+       }
+       await this.updateCategoryData(req, res, next, userId, managementId, dto);
+   }
+ 
+ @trailUpdatedRecord('category')
+   async updateCategoryData(req: Request, res: Response, next:NextFunction,  userId: string, managementId: string, dto: UpdateCategoryDTO) {
+     let existingCategory = null;
+     await req.app.locals.category.findById(req.params.id).then(result => {
+       if (result) {
+        existingCategory = result;
+       }
+       else if (result.length === 0) {
+         this.sendResponse(new BasicResponse(Status.NOT_FOUND), res);
+       }
+     }).catch(err => {
+       this.sendResponse(new BasicResponse(Status.NOT_FOUND), res);
+       
+     });
+ 
+     existingCategory.secret.name = dto.name;
+     existingCategory.nameHash = this.sha256(dto.name);
+     existingCategory.secret.description = dto.description;
+     existingCategory.lastUpdatedAt = new Date()
+
+     return existingCategory;
+ 
+   }
+  
 
    
   async validateNewInvCategoryDetails(dto: CreateInventoryCategoryDTO, req: Request, managementId: string) {
