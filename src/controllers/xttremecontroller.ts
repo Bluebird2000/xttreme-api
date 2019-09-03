@@ -2,6 +2,7 @@ import { NextFunction, Request, Response, Router } from "express";
 import { BaseController } from "./basecontroller";
 import { AuthService } from '../services/AuthService';
 import { CategoryService } from '../services/CategoryService';
+import { InventoryService } from "../services/InventoryService";
 
 export class XttremeInventoryController extends BaseController {
   public loadRoutes(prefix: String, router: Router) {
@@ -14,6 +15,7 @@ export class XttremeInventoryController extends BaseController {
     this.listInventoryCategories(prefix, router);
     this.getCategoryById(prefix, router);
     this.updateCategoryById(prefix, router);
+    this.addNewItem(prefix, router);
 
   }
 
@@ -58,26 +60,32 @@ export class XttremeInventoryController extends BaseController {
   }
 
   public listInventoryCategories(prefix: String, router: Router): any {
-    router.get( prefix + "/category", [this.authorize.bind(this)], (req: Request, res: Response, next: NextFunction) => { new CategoryService().listInventoryCategories( req, res, next, this.user_id,this.user_managementId
+    router.get(prefix + "/category", [this.authorize.bind(this)], (req: Request, res: Response, next: NextFunction) => { new CategoryService().listInventoryCategories( req, res, next, this.user_id,this.user_managementId
         );
       }
     );
   }
 
   public getCategoryById(prefix: String, router: Router): any {
-    router.get( prefix + "/category/:id", [this.authorize.bind(this)], (req: Request, res: Response, next: NextFunction) => { new CategoryService().getCategoryById( req, res, next, this.user_id,this.user_managementId
+    router.get(prefix + "/category/:id", [this.authorize.bind(this)], (req: Request, res: Response, next: NextFunction) => { new CategoryService().getCategoryById( req, res, next, this.user_id,this.user_managementId
         );
       }
     );
   } 
 
   public updateCategoryById(prefix: String, router: Router): any {
-    console.log('Here');
     router.put( prefix + "/category/:id", [this.authorize.bind(this)], (req: Request, res: Response, next: NextFunction) => { new CategoryService().updateCategoryById( req, res, next, this.user_id,this.user_managementId
         );
       }
     );
   } 
+
+  public addNewItem(prefix: String, router: Router): any {
+    router.post(prefix + "/item", [this.authorize.bind(this)], (req: Request, res: Response, next: NextFunction) => { new InventoryService().addNewItem(req, res, next, this.user_id, this.user_managementId
+        );
+      }
+    );
+  }
 
 
 
