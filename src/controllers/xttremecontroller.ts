@@ -2,7 +2,7 @@ import { NextFunction, Request, Response, Router } from "express";
 import { BaseController } from "./basecontroller";
 import { AuthService } from '../services/AuthService';
 import { CategoryService } from '../services/CategoryService';
-import { InventoryService } from "../services/InventoryService";
+import { ItemService } from "../services/InventoryService";
 
 export class XttremeInventoryController extends BaseController {
   public loadRoutes(prefix: String, router: Router) {
@@ -81,7 +81,7 @@ export class XttremeInventoryController extends BaseController {
   } 
 
   public addNewItem(prefix: String, router: Router): any {
-    router.post(prefix + "/item", [this.authorize.bind(this)], (req: Request, res: Response, next: NextFunction) => { new InventoryService().addNewItem(req, res, next, this.user_id, this.user_managementId
+    router.post(prefix + "/item", [this.authorize.bind(this)], (req: Request, res: Response, next: NextFunction) => { new ItemService().addNewItem(req, res, next, this.user_id, this.user_managementId
         );
       }
     );
