@@ -5,21 +5,19 @@ import { NextFunction, Request, Response } from "express";
 import { IItemModel } from "../models/item";
 import { CreatItemDTO } from "../dto/input/createitemdto";
 import { validateSync } from "class-validator";
-import { verify } from 'jsonwebtoken';
-import { trailNewRecord, handleException, singleList, trailUpdatedRecord, list} from "../aspects/historytrail";
+import { trailNewRecord, handleException } from "../aspects/historytrail";
 
 
-export class InventoryService extends BaseService {
+export class ItemService extends BaseService {
   
 @handleException()
   public async addNewItem( req: Request, res: Response, next: NextFunction, userId: string, managementId: string) {
-    const { name, description, quantity, category, properties, image, tag, purchased_total_amount_per_item, unit_cost, transaction_reference } = req.body;
-    let dto = new CreatItemDTO(name, description, quantity, category, properties, image, tag, purchased_total_amount_per_item, unit_cost, transaction_reference);
+    const { name, description, quantity, category, tag, reorder_level } = req.body;
+    let dto = new CreatItemDTO(name, description, quantity, category, tag, reorder_level);
 
     let errors = await this.validateNewInventoryDetails(dto, req, managementId);
     if (this.hasErrors(errors)) {
-      this.sendResponse(
-        new BasicResponse(Status.FAILED_VALIDATION, errors), res);
+      this.sendResponse( new BasicResponse(Status.FAILED_VALIDATION, errors), res);
       return next();
     }
 
@@ -30,14 +28,13 @@ export class InventoryService extends BaseService {
   @trailNewRecord("item")
   async saveNewItemData(req: Request,res: Response, next: NextFunction, userId: string, managementId: string, dto: CreatItemDTO
   ) {
-    let { name, description, quantity, category, properties, image, tag, purchased_total_amount_per_item, unit_cost, transaction_reference } = dto;
-    const secret = { name, description, quantity, category, properties, image, tag, purchased_total_amount_per_item, unit_cost, transaction_reference }
+    let {name, description, quantity, category, tag, reorder_level } = dto;
+    const secret = { name, description, quantity, category, tag, reorder_level }
     
     let item: IItemModel = req.app.locals.item({ secret, userId, managementId});
 
     return item;
   
-   
   }
 
   async validateNewInventoryDetails(dto: CreatItemDTO, req: Request, tenantId: string) {

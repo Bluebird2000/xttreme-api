@@ -29,36 +29,20 @@ export class CreatItemDTO {
     category: string;
 
     @IsOptional()
-    properties: [{ id?: string, value?: string }];
-
-    @IsOptional()
-    image: string;
-
-    @IsOptional()
     @MaxLength(100, {
         message: 'tag should not exceed 100 characters length'
     })
     tag?: string;
 
     @IsOptional()
-    purchased_total_amount_per_item?: string;
+    reorder_level?: number;
 
-    @IsOptional()
-    unit_cost?: string;
-
-    @IsOptional()
-    transaction_reference?: string;
-
-    constructor(name?: string, description?: string, quantity?: number, category?: string, properties?: [{ id?: string, value?: string }], image?: string, tag?: string, purchased_total_amount_per_item?: string, unit_cost?: string, transaction_reference?: string) {
+    constructor(name?: string, description?: string, quantity?: number, category?: string, tag?: string, reorder_level?: number ) {
         this.name = name;
         this.description = description;
         this.quantity = quantity;
         this.category = category;
-        this.properties = properties;
-        this.image = image;
         this.tag = tag;
-        this.purchased_total_amount_per_item = purchased_total_amount_per_item;
-        this.unit_cost = unit_cost;
-        this.transaction_reference = transaction_reference;
+        this.reorder_level = reorder_level
     }
 }
