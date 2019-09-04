@@ -20,6 +20,7 @@ import { XttremeInventoryController } from './controllers/xttremecontroller';
 import { IModel } from "./models/model";
 import { IRegisterModel } from "./models/register";
 import { IInventoryCategoryModel } from "./models/category";
+import { IItemModel } from "./models/item";
 import { ITokenModel } from "./models/token";
 import { tokenSchema } from './schemas/token';
 
@@ -28,7 +29,8 @@ import { tokenSchema } from './schemas/token';
 import chalk = require('chalk');
 import { connect } from "tls";
 import { registerSchema } from './schemas/register';
-import { inventoryCategorySchema } from './schemas/category';
+import { categorySchema } from './schemas/category';
+import { itemSchema } from './schemas/item';
 
 
 
@@ -128,7 +130,8 @@ export class Server {
 
     this.app.locals.register = connection.model<IRegisterModel>("Register", registerSchema);
     this.app.locals.token = connection.model<ITokenModel>("Token", tokenSchema);
-    this.app.locals.category = connection.model<IInventoryCategoryModel>("Category", inventoryCategorySchema);
+    this.app.locals.category = connection.model<IInventoryCategoryModel>("Category", categorySchema);
+    this.app.locals.item = connection.model<IItemModel>("Item", itemSchema);
 
     // catch 404 and forward to error handler
     this.app.use(function (err: any, req: express.Request, res: express.Response, next: express.NextFunction) {

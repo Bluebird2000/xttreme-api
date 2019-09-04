@@ -3,7 +3,7 @@ import { BasicResponse } from "../dto/output/basicresponse";
 import { Status } from "../dto/enums/statusenum";
 import { NextFunction, Request, Response } from "express";
 import { IItemModel } from "../models/item";
-import { CreatItemDTO } from "../dto/input/createitemdto";
+import { CreateItemDTO } from "../dto/input/createitemdto";
 import { validateSync } from "class-validator";
 import { trailNewRecord, handleException } from "../aspects/historytrail";
 
@@ -13,7 +13,7 @@ export class ItemService extends BaseService {
 @handleException()
   public async addNewItem( req: Request, res: Response, next: NextFunction, userId: string, managementId: string) {
     const { name, description, quantity, category, tag, reorder_level } = req.body;
-    let dto = new CreatItemDTO(name, description, quantity, category, tag, reorder_level);
+    let dto = new CreateItemDTO(name, description, quantity, category, tag, reorder_level);
 
     let errors = await this.validateNewInventoryDetails(dto, req, managementId);
     if (this.hasErrors(errors)) {
@@ -26,18 +26,18 @@ export class ItemService extends BaseService {
 
 
   @trailNewRecord("item")
-  async saveNewItemData(req: Request,res: Response, next: NextFunction, userId: string, managementId: string, dto: CreatItemDTO
+  async saveNewItemData(req: Request,res: Response, next: NextFunction, userId: string, managementId: string, dto: CreateItemDTO
   ) {
     let {name, description, quantity, category, tag, reorder_level } = dto;
-    const secret = { name, description, quantity, category, tag, reorder_level }
+    const secret = { name, description, quantity, reorder_level }
     
-    let item: IItemModel = req.app.locals.item({ secret, userId, managementId});
+    let item: IItemModel = req.app.locals.item({ secret, category, tag, userId, managementId, nameHash: this.sha256(name)});
 
     return item;
   
   }
 
-  async validateNewInventoryDetails(dto: CreatItemDTO, req: Request, tenantId: string) {
+  async validateNewInventoryDetails(dto: CreateItemDTO, req: Request, tenantId: string) {
     let errors = validateSync(dto, { validationError: { target: false } });
     if (this.hasErrors(errors)) {
       return errors;

@@ -1,6 +1,6 @@
 import { Length, IsNotEmpty, MinLength, MaxLength, IsOptional } from "class-validator";
 
-export class CreatItemDTO {
+export class CreateItemDTO {
     @IsNotEmpty({
         message: 'name is required'
     })
