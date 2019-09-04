@@ -2,7 +2,7 @@ import { NextFunction, Request, Response, Router } from "express";
 import { BaseController } from "./basecontroller";
 import { AuthService } from '../services/AuthService';
 import { CategoryService } from '../services/CategoryService';
-import { ItemService } from "../services/InventoryService";
+import { ItemService } from "../services/ItemService";
 
 export class XttremeInventoryController extends BaseController {
   public loadRoutes(prefix: String, router: Router) {

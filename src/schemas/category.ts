@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 import * as mongoose from 'mongoose';
-export let inventoryCategorySchema: Schema = new Schema({
+export let categorySchema: Schema = new Schema({
   secret: {
     name: String,
     description: String,

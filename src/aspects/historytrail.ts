@@ -229,13 +229,13 @@ export const trailNewRecord = (schemaName: string): any =>
     let response = meta.args[1];
     let next = meta.args[2];
     let userInfo = request.app.locals.userobj;
-    let description = `${userInfo.firstname} ${userInfo.lastname} added a new record`;
+    // let description = `${userInfo.firstname} ${userInfo.lastname} added a new record`;
     meta.result.then(model => {
       console.log('inside model', model);
       model.save().then(entity => {
         console.log('inside entity', entity);
         if (entity) {
-          saveActivity(description, schemaName, null, entity.secret, "create", request);
+          // saveActivity(description, schemaName, null, entity.secret, "create", request);
 
           sendResponse(new BasicResponse(Status.CREATED, entity), response);
           return next();
