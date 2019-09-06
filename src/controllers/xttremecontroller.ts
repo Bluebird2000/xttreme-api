@@ -17,6 +17,7 @@ export class XttremeInventoryController extends BaseController {
     this.updateCategoryById(prefix, router);
     this.addNewItem(prefix, router);
     this.listAllItems(prefix, router);
+    this.updateItemById(prefix, router);
 
   }
 
@@ -95,6 +96,12 @@ export class XttremeInventoryController extends BaseController {
     );
   }
 
+  public updateItemById(prefix: String, router: Router): any {
+    router.put( prefix + "/category/:id", [this.authorize.bind(this)], (req: Request, res: Response, next: NextFunction) => { new ItemService().updateItemById( req, res, next, this.user_id,this.user_managementId
+        );
+      }
+    );
+  } 
 
 
 
