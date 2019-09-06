@@ -5,7 +5,7 @@ import { NextFunction, Request, Response } from "express";
 import { IItemModel } from "../models/item";
 import { CreateItemDTO } from "../dto/input/createitemdto";
 import { validateSync } from "class-validator";
-import { trailNewRecord, handleException } from "../aspects/historytrail";
+import { trailNewRecord, handleException, simpleList } from "../aspects/historytrail";
 
 
 export class ItemService extends BaseService {
@@ -36,6 +36,10 @@ export class ItemService extends BaseService {
     return item;
   
   }
+
+  @simpleList('item')
+  public async listAllItems(req: Request, res: Response, next: NextFunction, userId: string, managementId: string)
+  { }
 
   async validateNewInventoryDetails(dto: CreateItemDTO, req: Request, tenantId: string) {
     let errors = validateSync(dto, { validationError: { target: false } });
