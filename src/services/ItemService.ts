@@ -101,12 +101,6 @@ export class ItemService extends BaseService {
     //   console.log('error', e);
     // });
 
-    // if (dto.image) {
-    //   let validateToken = await this.validateImageUploadToken(dto, req, tenantId);
-    //   if (!validateToken) {
-    //     errors.push(this.validateImageToken(dto.image));
-    //   }
-    // }
 
 
     // await req.app.locals.inventoryCategory.find({ _id: dto.category })
