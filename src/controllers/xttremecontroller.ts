@@ -18,14 +18,15 @@ export class XttremeInventoryController extends BaseController {
     this.addNewItem(prefix, router);
     this.listAllItems(prefix, router);
     this.updateItemById(prefix, router);
-
   }
+
 
   public registerUser(prefix: String, router: Router): any {
     router.post(prefix + "/auth/register", (req: Request, res: Response, next: NextFunction) => {
       new AuthService().registerUser(req, res, next);
     });
   }
+
 
   public confirmUser(prefix: String, router: Router): any {
     router.post(prefix + "/auth/confirmation", (req: Request, res: Response, next: NextFunction) => {
@@ -34,6 +35,7 @@ export class XttremeInventoryController extends BaseController {
     });
   }
 
+
   public resendEmailConfirmationLink(prefix: String, router: Router): any {
     router.post(prefix + "/auth/resend", (req: Request, res: Response, next: NextFunction) => {
       new AuthService().resendEmailConfirmationLink(req, res, next);
@@ -41,17 +43,20 @@ export class XttremeInventoryController extends BaseController {
     });
   }
 
+
   public resetPassword(prefix: String, router: Router): any {
     router.post(prefix + "/auth/reset_password", (req: Request, res: Response, next: NextFunction) => {
       new AuthService().processResetPassword(req, res, next);
     });
   }
 
+
   public loginUser(prefix: String, router: Router): any {
     router.post(prefix + "/auth/login", (req: Request, res: Response, next: NextFunction) => {
       new AuthService().loginUser(req, res, next);
     });
   }
+
 
   public createInventoryCategory(prefix: String, router: Router): any {
     router.post(prefix + "/category", [this.authorize.bind(this)], (req: Request, res: Response, next: NextFunction) => {
@@ -61,12 +66,14 @@ export class XttremeInventoryController extends BaseController {
     );
   }
 
+
   public listInventoryCategories(prefix: String, router: Router): any {
     router.get(prefix + "/category", [this.authorize.bind(this)], (req: Request, res: Response, next: NextFunction) => { new CategoryService().listInventoryCategories( req, res, next, this.user_id,this.user_managementId
         );
       }
     );
   }
+
 
   public getCategoryById(prefix: String, router: Router): any {
     router.get(prefix + "/category/:id", [this.authorize.bind(this)], (req: Request, res: Response, next: NextFunction) => { new CategoryService().getCategoryById( req, res, next, this.user_id,this.user_managementId
@@ -75,12 +82,14 @@ export class XttremeInventoryController extends BaseController {
     );
   } 
 
+
   public updateCategoryById(prefix: String, router: Router): any {
     router.put( prefix + "/category/:id", [this.authorize.bind(this)], (req: Request, res: Response, next: NextFunction) => { new CategoryService().updateCategoryById( req, res, next, this.user_id,this.user_managementId
         );
       }
     );
   } 
+
 
   public addNewItem(prefix: String, router: Router): any {
     router.post(prefix + "/item", [this.authorize.bind(this)], (req: Request, res: Response, next: NextFunction) => { new ItemService().addNewItem(req, res, next, this.user_id, this.user_managementId
@@ -89,12 +98,14 @@ export class XttremeInventoryController extends BaseController {
     );
   }
 
+
   public listAllItems(prefix: String, router: Router): any {
     router.get(prefix + "/category", [this.authorize.bind(this)], (req: Request, res: Response, next: NextFunction) => { new ItemService().listAllItems( req, res, next, this.user_id,this.user_managementId
         );
       }
     );
   }
+
 
   public updateItemById(prefix: String, router: Router): any {
     router.put( prefix + "/category/:id", [this.authorize.bind(this)], (req: Request, res: Response, next: NextFunction) => { new ItemService().updateItemById( req, res, next, this.user_id,this.user_managementId
