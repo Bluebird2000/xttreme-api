@@ -148,6 +148,7 @@ export class AuthService extends BaseService {
 
         })
     }
+    
 
     public async processResetPassword(req, res, next) {
         const { id, password } = req.body;
