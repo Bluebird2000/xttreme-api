@@ -73,14 +73,11 @@ export class AuthService extends BaseService {
 
     public async sendMail(req: Request, res: Response, next: NextFunction, email, data, midpath) {
         SGmail.setApiKey(process.env.SEND_GRID_KEY);
-        // const html = pug.renderFile(`${__dirname}/../views/email/welcome.pug`)
         const msg = {
             to: email,
             from: 'email@xttreme.com',
             subject: 'Account Verification',
-            // html,
             html: `<p>Click on this link to activate and confirm your account <a href="${baseUrl}/${midpath}/${data}">${midpath} Link</p>`
-            // text: htmlToText.fromString(html)
         };
         SGmail.send(msg);
     }
