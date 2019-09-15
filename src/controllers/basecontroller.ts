@@ -89,6 +89,7 @@ export class BaseController {
       let user: any = verify(token, secret);
       console.log('Base controller', user);
       this.setUserVariables(user)
+      console.log('Authroized', user);
       req.app.locals.userobj = user;
       return true;
 
