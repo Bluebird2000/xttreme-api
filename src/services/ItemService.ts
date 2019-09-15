@@ -30,7 +30,9 @@ export class ItemService extends BaseService {
   ) {
     let {name, description, quantity, category, tag, reorder_level } = dto;
     const secret = { name, description, quantity, reorder_level }
-
+    let userInfo = req.app.locals.userobj;
+    console.log(11,userInfo);
+    userId = `${userInfo.firstName} ${userInfo.lastName}`;
     let item: IItemModel = req.app.locals.item({ secret, category, tag, userId, managementId, nameHash: this.sha256(name)});
 
     return item;
@@ -59,7 +61,9 @@ export class ItemService extends BaseService {
    
  @trailUpdatedRecord('item')
    async updateItemData(req: Request, res: Response, next:NextFunction,  userId: string, managementId: string, dto: CreateItemDTO) {
-     let existingItem = null;
+    let existingItem = null;
+    let userInfo = req.app.locals.userobj;
+    userId = `${userInfo.firstname} ${userInfo.lastname}`;
      await req.app.locals.item.findById(req.params.id).then(result => {
        if (result) {
         existingItem = result;

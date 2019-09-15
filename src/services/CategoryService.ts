@@ -38,6 +38,8 @@ export class CategoryService extends BaseService {
       const secret = { name, description };
       let category: IInventoryCategoryModel = req.app.locals.category({ secret, userId, managementId, nameHash: this.sha256(name) });
       let responseObj = null
+      let userInfo = req.app.locals.userobj;
+      userId = `${userInfo.firstname} ${userInfo.lastname}`;
       await category.save().then(async result => {
           if (result) {
             this.sendResponse(new BasicResponse(Status.CREATED, result), res);
@@ -77,7 +79,9 @@ export class CategoryService extends BaseService {
  
  @trailUpdatedRecord('category')
    async updateCategoryData(req: Request, res: Response, next:NextFunction,  userId: string, managementId: string, dto: UpdateCategoryDTO) {
-     let existingCategory = null;
+    let existingCategory = null;
+    let userInfo = req.app.locals.userobj;
+    userId = `${userInfo.firstname} ${userInfo.lastname}`;
      await req.app.locals.category.findById(req.params.id).then(result => {
        if (result) {
         existingCategory = result;
