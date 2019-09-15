@@ -38,7 +38,7 @@ export class ItemService extends BaseService {
   }
 
   @simpleList('item')
-  public async listAllItems(req: Request, res: Response, next: NextFunction, userId: string, managementId: string)
+  public async listItems(req: Request, res: Response, next: NextFunction, userId: string, managementId: string)
   { }
 
 
