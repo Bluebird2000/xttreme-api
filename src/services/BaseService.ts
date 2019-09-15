@@ -115,12 +115,13 @@ export class BaseService {
         const secret = process.env.USER_JWT_SECRET;
         const dataStoredInToken = {
             _id: user._id,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email,
+            firstName: user.secret.firstName,
+            lastName: user.secret.lastName,
+            email: user.secret.email,
             managementId: user.managementId,
             userId: user.userId,
         };
+        console.log(dataStoredInToken);
     
         const secure:boolean= true
         const token = jwt.sign(dataStoredInToken, secret, { expiresIn })
