@@ -100,7 +100,7 @@ export class XttremeInventoryController extends BaseController {
 
 
   public listItems(prefix: String, router: Router): any {
-    router.get(prefix + "/category", [this.authorize.bind(this)], (req: Request, res: Response, next: NextFunction) => { new ItemService().listItems( req, res, next, this.user_id,this.user_managementId
+    router.get(prefix + "/item", [this.authorize.bind(this)], (req: Request, res: Response, next: NextFunction) => { new ItemService().listItems( req, res, next, this.user_id,this.user_managementId
         );
       }
     );
