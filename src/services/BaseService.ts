@@ -119,7 +119,7 @@ export class BaseService {
             lastName: user.secret.lastName,
             email: user.secret.email,
             managementId: user.managementId,
-            userId: user.userId,
+            userId: `${user.secret.firstName} ${user.secret.lastName}`,
         };
         console.log(dataStoredInToken);
     
