@@ -18,6 +18,7 @@ export class XttremeInventoryController extends BaseController {
     this.addNewItem(prefix, router);
     this.listItems(prefix, router);
     this.updateItemById(prefix, router);
+    this.approveItem(prefix, router);
   }
 
 
@@ -113,6 +114,12 @@ export class XttremeInventoryController extends BaseController {
     );
   } 
 
+  public approveItem(prefix: String, router: Router): any {
+    router.patch( prefix + "/item/approve/:id", [this.authorize.bind(this)], (req: Request, res: Response, next: NextFunction) => { new ItemService().approveItem( req, res, next, this.user_id, this.user_managementId
+        );
+      }
+    );
+  } 
 
 
   public authorize(req: Request, res: Response, next: NextFunction) {

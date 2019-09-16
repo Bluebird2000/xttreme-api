@@ -42,6 +42,24 @@ export class ItemService extends BaseService {
   { }
 
 
+  @trailUpdatedRecord('item')
+  public async approveItem(req: Request, res: Response, next: NextFunction, userId: string, managementId: string) {
+    let result;
+    try {
+      result = await req.app.locals.item.findById(req.params.id);
+      if(!result) {
+        this.sendResponse(new BasicResponse(Status.NOT_FOUND, ["Invalid item id"]), res);
+      }
+      result.approval_status = 'approved'
+      result.lastUpdatedAt = new Date()
+    } catch (err) {
+      this.sendResponse(new BasicResponse(Status.ERROR, err), res);
+    }
+    return result;
+
+  }
+
+
   @handleException()
   public async updateItemById(req: Request, res: Response, next: NextFunction, userId: string, managementId: string) {
      const { name, description, quantity, category, tag, reorder_level } = req.body;
@@ -54,7 +72,7 @@ export class ItemService extends BaseService {
          return next();
        }
        await this.updateItemData(req, res, next, userId, managementId, dto);
-   }
+  }
  
    
  @trailUpdatedRecord('item')
