@@ -61,7 +61,7 @@ export const simpleList = (schemaName: string): any =>
     await request.app.locals[schemaName].count({ managementId: managementId }).then(result => { count = result });
 
     let base;
-      base = request.app.locals[schemaName].find({ managementId: managementId })
+      base = request.app.locals[schemaName].find({ managementId: managementId }).populate('category')
     
     base
       .skip(skip)
