@@ -27,7 +27,7 @@ export let itemSchema: Schema = new Schema({
     },
     userId: {
         type: String,
-        // required: true
+        required: true
     },
     createdAt: {
         type: Date,
