@@ -30,12 +30,12 @@ export class ItemService extends BaseService {
   ) {
     let {name, description, quantity, category, tag, reorder_level } = dto;
     const secret = { name, description, quantity, reorder_level }
-    console.log(1111111111111111111111111111111111111111,userId);
     let item: IItemModel = req.app.locals.item({ secret, category, tag, userId, managementId, nameHash: this.sha256(name)});
 
     return item;
   
   }
+
 
   @simpleList('item')
   public async listItems(req: Request, res: Response, next: NextFunction, userId: string, managementId: string)
