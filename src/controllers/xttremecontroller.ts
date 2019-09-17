@@ -19,8 +19,15 @@ export class XttremeInventoryController extends BaseController {
     this.listItems(prefix, router);
     this.updateItemById(prefix, router);
     this.approveItem(prefix, router);
+    this.listRoles(prefix, router);
   }
 
+
+  public listRoles(prefix: String, router: Router): any {
+    router.post(prefix + "/user/roles", (req: Request, res: Response, next: NextFunction) => {
+      new AuthService().listRoles(req, res, next);
+    });
+  }
 
   public registerUser(prefix: String, router: Router): any {
     router.post(prefix + "/auth/register", (req: Request, res: Response, next: NextFunction) => {
