@@ -12,6 +12,7 @@ import { ResetPasswordDTO } from '../dto/input/resetpassworddto';
 import { ForgotPasswordDTO } from '../dto/input/forgotpassworddto';
 import { LoginUserDTO } from '../dto/input/loginuserdto';
 import { IRegisterModel } from '../models/register';
+import { roleList } from "../dto/enums/data";
 import uuid = require('uuid');
 import { compareSync, hashSync } from "bcrypt-nodejs";
 import { ITokenModel } from '../models/token';
@@ -19,6 +20,10 @@ import SGmail = require('@sendgrid/mail');
 const baseUrl = process.env.BASE_URL;
 
 export class AuthService extends BaseService {
+
+    public async listRoles(req: Request, res: Response, next: NextFunction) {
+        this.sendResponse(new BasicResponse(Status.SUCCESS, roleList), res);
+    }
 
     @handleException()
     public async registerUser(req: Request, res: Response, next: NextFunction) {
