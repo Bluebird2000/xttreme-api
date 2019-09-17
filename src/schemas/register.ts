@@ -35,6 +35,10 @@ export let registerSchema: Schema = new Schema({
   isVerified: {
     type: Boolean, default: false
   },
+  role: {
+    type: String,
+    default: 'admin'
+  },
   createdAt: {
     type: Date,
     default: Date.now
