@@ -10,14 +10,7 @@ export class ForgotPasswordDTO {
     email: string;
 
 
-    @IsNotEmpty({
-        "message": "baseUrl is required"  
-      })
-    @IsUrl()
-    baseUrl: string;
-
     constructor(email?: string, baseUrl?: string){
         this.email = email;
-        this.baseUrl = baseUrl;
     }
 }
