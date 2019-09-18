@@ -60,7 +60,7 @@ export class XttremeInventoryController extends BaseController {
   }
 
   public sendResetPasswordLink(prefix: String, router: Router): any {
-    router.post(prefix + "/send_link", (req: Request, res: Response, next: NextFunction) => {
+    router.post(prefix + "/auth/send_link", (req: Request, res: Response, next: NextFunction) => {
       new AuthService().sendResetPasswordLink(req, res, next);
     });
   }
