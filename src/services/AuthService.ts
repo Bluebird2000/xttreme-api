@@ -181,8 +181,8 @@ export class AuthService extends BaseService {
 
     @handleException()
     public async sendResetPasswordLink(req: Request, res: Response, next: NextFunction) {
-        const { email, baseUrl } = req.body;
-        let dto = new ForgotPasswordDTO(email, baseUrl);
+        const { email } = req.body;
+        let dto = new ForgotPasswordDTO(email);
         let errors = await this.validateDetails(dto, req);
         if (this.hasErrors(errors)) {
             this.sendResponse(new BasicResponse(Status.FAILED_VALIDATION, errors), res);
