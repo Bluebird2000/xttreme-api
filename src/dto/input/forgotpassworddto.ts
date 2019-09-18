@@ -1,4 +1,4 @@
-import {IsEmail, IsNotEmpty, MinLength, MaxLength, IsUrl} from "class-validator";
+import {IsEmail, IsNotEmpty, IsUrl} from "class-validator";
 
 export class ForgotPasswordDTO {
  
@@ -9,7 +9,15 @@ export class ForgotPasswordDTO {
     })
     email: string;
 
-    constructor(email?: string){
+
+    @IsNotEmpty({
+        "message": "baseUrl is required"  
+      })
+    @IsUrl()
+    baseUrl: string;
+
+    constructor(email?: string, baseUrl?: string){
         this.email = email;
+        this.baseUrl = baseUrl;
     }
 }

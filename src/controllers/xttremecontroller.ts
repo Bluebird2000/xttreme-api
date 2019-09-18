@@ -10,6 +10,7 @@ export class XttremeInventoryController extends BaseController {
     this.confirmUser(prefix, router);
     this.resendEmailConfirmationLink(prefix, router);
     this.resetPassword(prefix, router);
+    this.sendResetPasswordLink(prefix, router);
     this.loginUser(prefix, router);
     this.createInventoryCategory(prefix, router);
     this.listInventoryCategories(prefix, router);
@@ -55,6 +56,12 @@ export class XttremeInventoryController extends BaseController {
   public resetPassword(prefix: String, router: Router): any {
     router.post(prefix + "/auth/reset_password", (req: Request, res: Response, next: NextFunction) => {
       new AuthService().processResetPassword(req, res, next);
+    });
+  }
+
+  public sendResetPasswordLink(prefix: String, router: Router): any {
+    router.post(prefix + "/send_link", (req: Request, res: Response, next: NextFunction) => {
+      new AuthService().sendResetPasswordLink(req, res, next);
     });
   }
 
