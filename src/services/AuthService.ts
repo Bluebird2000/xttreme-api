@@ -179,6 +179,26 @@ export class AuthService extends BaseService {
         })
     }
 
+    @handleException()
+    public async sendResetPasswordLink(req: Request, res: Response, next: NextFunction) {
+        const { email, baseUrl } = req.body;
+        let dto = new ForgotPasswordDTO(email, baseUrl);
+        let errors = await this.validateDetails(dto, req);
+        if (this.hasErrors(errors)) {
+            this.sendResponse(new BasicResponse(Status.FAILED_VALIDATION, errors), res);
+            return next();
+        }
+
+        await req.app.locals.register.findOne({ email: dto.email.toLowerCase() }).then(async user => {
+            if (!user) return this.sendResponse(new BasicResponse(Status.NOT_FOUND, { msg: 'We were unable to find a user with that email.' }), res);
+            if (user && !user.isVerified) return this.sendResponse(new BasicResponse(Status.PRECONDITION_FAILED, { msg: 'Check your mail or resend activation link to activate your account.' }), res);
+            this.sendMail(req, res, next, dto.email, user._id, "reset-password")
+            this.sendResponse(new BasicResponse(Status.SUCCESS, { msg: "The reset password link has been sent to your email" }), res);
+
+        })
+
+    }
+
 
     @handleException()
     public async loginUser(req: Request, res: Response, next: NextFunction) {
