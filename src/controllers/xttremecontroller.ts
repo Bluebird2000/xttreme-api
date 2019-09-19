@@ -25,7 +25,7 @@ export class XttremeInventoryController extends BaseController {
 
 
   public listRoles(prefix: String, router: Router): any {
-    router.post(prefix + "/user/roles", (req: Request, res: Response, next: NextFunction) => {
+    router.get(prefix + "/user/roles", (req: Request, res: Response, next: NextFunction) => {
       new AuthService().listRoles(req, res, next);
     });
   }
