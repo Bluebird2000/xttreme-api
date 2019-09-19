@@ -189,7 +189,7 @@ export class AuthService extends BaseService {
             return next();
         }
 
-        await req.app.locals.register.findOne({ email: dto.email.toLowerCase() }).then(async user => {
+        await req.app.locals.register.findOne({ emailHash: this.sha256(dto.email.toLowerCase()) }).then(async user => {
             if (!user) return this.sendResponse(new BasicResponse(Status.NOT_FOUND, { msg: 'We were unable to find a user with that email.' }), res);
             if (user && !user.isVerified) return this.sendResponse(new BasicResponse(Status.PRECONDITION_FAILED, { msg: 'Check your mail or resend activation link to activate your account.' }), res);
             this.sendMail(req, res, next, dto.email, user._id, "reset-password")
