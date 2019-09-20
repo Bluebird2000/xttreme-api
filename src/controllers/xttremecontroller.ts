@@ -3,6 +3,7 @@ import { BaseController } from "./basecontroller";
 import { AuthService } from '../services/AuthService';
 import { CategoryService } from '../services/CategoryService';
 import { ItemService } from "../services/ItemService";
+import { AuditTrailService } from "../services/audittrailservice";
 
 export class XttremeInventoryController extends BaseController {
   public loadRoutes(prefix: String, router: Router) {
@@ -148,6 +149,13 @@ export class XttremeInventoryController extends BaseController {
       }
     );
   } 
+
+  public listAuditTrail(prefix: String, router: Router): any {
+    router.get(prefix + "/audit_trail", [this.authorize.bind(this)], (req: Request, res: Response, next: NextFunction) => {new AuditTrailService().listTrail(req, res, next, this.user_id, this.user_managementId
+        );
+      }
+    );
+  }
 
 
   public authorize(req: Request, res: Response, next: NextFunction) {
