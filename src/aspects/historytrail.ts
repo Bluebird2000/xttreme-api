@@ -5,9 +5,6 @@ import { Status } from "../dto/enums/statusenum";
 import { IsNumberString } from "class-validator";
 import { isNumber } from "util";
 import crypto = require("crypto");
-import * as cron from "node-cron";
-// import { URLSearchParams } from 'url';
-import axios from 'axios';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
@@ -115,7 +112,7 @@ export const simpleList = (schemaName: string): any =>
     let base;
       base = request.app.locals[schemaName].findOne({ _id: request.params.id, managementId }).populate('category')
     base
-      .skip(skip)
+      .skip(skip) 
       .limit(parseInt(limit))
       .sort([['createdAt', -1]])
       .then(result => {
@@ -200,7 +197,7 @@ export const list = (schemaName: string): any =>
 
     let userInfo = request.app.locals.userobj;
 
-    let description = `${userInfo.firstname} ${userInfo.lastname} updated a record`;
+    let description = `${userInfo.firstName} ${userInfo.lastName} updated a record`;
     let modelInstance = request.app.locals[schemaName];
 
     let previousEntity = null;
@@ -229,14 +226,11 @@ export const trailNewRecord = (schemaName: string): any =>
     let response = meta.args[1];
     let next = meta.args[2];
     let userInfo = request.app.locals.userobj;
-    // let description = `${userInfo.firstname} ${userInfo.lastname} added a new record`;
+    let description = `${userInfo.firstName} ${userInfo.lastName} added a new record`;
     meta.result.then(model => {
-      console.log('inside model', model);
       model.save().then(entity => {
-        console.log('inside entity', entity);
         if (entity) {
-          // saveActivity(description, schemaName, null, entity.secret, "create", request);
-
+          saveActivity(description, schemaName, null, entity.secret, "create", request);
           sendResponse(new BasicResponse(Status.CREATED, entity), response);
           return next();
         } else {
@@ -252,24 +246,14 @@ export const trailNewRecord = (schemaName: string): any =>
 async function saveActivity(description, schemaName, previousEntity, newEntity, actionType: string, request) {
   let userInfo = request.app.locals.userobj;
   let userId = userInfo.userId;
-  let tenantId = userInfo.organisationId;
+  let managementId = userInfo.managementId;
 
   let secret = { description, actionType, previousEntity, newEntity };
-  let activity: IActivityModel = request.app.locals.activity({schemaName, secret, userId, tenantId});
+  let activity: IActivityModel = request.app.locals.activity({schemaName, secret, userId, managementId});
   activity.save();
   return activity;
 }
 
-async function saveRequisitionActivity(description, schemaName, previousEntity, newEntity, actionType: string, request) {
-  let userInfo = request.app.locals.userobj;
-  let userId = userInfo.userId;
-  let tenantId = userInfo.organisationId;
-
-  let secret = { description, actionType, previousEntity, newEntity };
-  let activity: IActivityModel = request.app.locals.activity({schemaName, secret, userId, tenantId});
-  activity.save();
-  return activity;
-}
 
 function sendResponse(serviceResponse: BasicResponse, responseObj): any {
   let clientResponse = {

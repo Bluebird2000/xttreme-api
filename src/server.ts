@@ -23,6 +23,8 @@ import { IInventoryCategoryModel } from "./models/category";
 import { IItemModel } from "./models/item";
 import { ITokenModel } from "./models/token";
 import { tokenSchema } from './schemas/token';
+import { IActivityModel } from "./models/activity";
+
 
 //schemas
 
@@ -31,6 +33,7 @@ import { connect } from "tls";
 import { registerSchema } from './schemas/register';
 import { categorySchema } from './schemas/category';
 import { itemSchema } from './schemas/item';
+import { activitySchema } from "./schemas/activity";
 
 
 
@@ -132,6 +135,7 @@ export class Server {
     this.app.locals.token = connection.model<ITokenModel>("Token", tokenSchema);
     this.app.locals.category = connection.model<IInventoryCategoryModel>("Category", categorySchema);
     this.app.locals.item = connection.model<IItemModel>("Item", itemSchema);
+    this.app.locals.activity = connection.model<IActivityModel>("Activity", activitySchema);
 
     // catch 404 and forward to error handler
     this.app.use(function (err: any, req: express.Request, res: express.Response, next: express.NextFunction) {
