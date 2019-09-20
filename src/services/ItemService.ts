@@ -5,7 +5,7 @@ import { NextFunction, Request, Response } from "express";
 import { IItemModel } from "../models/item";
 import { CreateItemDTO } from "../dto/input/createitemdto";
 import { validateSync } from "class-validator";
-import { trailNewRecord, handleException, simpleList, trailUpdatedRecord } from "../aspects/historytrail";
+import { trailNewRecord, handleException, simpleList, trailUpdatedRecord, singleList } from "../aspects/historytrail";
 
 
 export class ItemService extends BaseService {
@@ -40,6 +40,10 @@ export class ItemService extends BaseService {
   @simpleList('item')
   public async listItems(req: Request, res: Response, next: NextFunction, userId: string, managementId: string)
   { }
+
+  @singleList('item')
+  public async getItemById(req: Request, res: Response, next: NextFunction, userId: string, managementId: string)
+   { }
 
 
   @trailUpdatedRecord('item')
