@@ -113,7 +113,7 @@ export const simpleList = (schemaName: string): any =>
       });
 
     let base;
-      base = request.app.locals[schemaName].find({ _id: request.params.id, managementId })
+      base = request.app.locals[schemaName].findOne({ _id: request.params.id, managementId }).populate('category')
     base
       .skip(skip)
       .limit(parseInt(limit))
