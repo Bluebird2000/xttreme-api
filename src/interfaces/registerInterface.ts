@@ -4,6 +4,7 @@ export interface IRegister {
     lastName?: String,
     email?: String,
     password?: String,
-    wattbankSN?: String,
+    role?: String,
     baseUrl?: String
+    
 }
