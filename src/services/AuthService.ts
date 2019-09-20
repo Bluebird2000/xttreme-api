@@ -17,6 +17,7 @@ import uuid = require('uuid');
 import { compareSync, hashSync } from "bcrypt-nodejs";
 import { ITokenModel } from '../models/token';
 import SGmail = require('@sendgrid/mail');
+import { trailNewRecord } from "../aspects/historytrail";
 const baseUrl = process.env.BASE_URL;
 
 export class AuthService extends BaseService {
@@ -45,7 +46,7 @@ export class AuthService extends BaseService {
         const timestampInMilliSeconds = Date.now();
         const uniqueManagementref = `${twoCharacterStr}-${timestampInMilliSeconds}-${uuid()}`;
         let register: IRegisterModel = req.app.locals.register({ secret, emailHash: this.sha256(email), userId: uuid(), managementId: uniqueManagementref });
-        let responseObj = null
+        let responseObj = null;
         await register.save().then(async result => {
             if (result) {
                 await this.saveNewUserData(req, res, next, dto, result)
@@ -76,6 +77,25 @@ export class AuthService extends BaseService {
         this.sendResponse(responseObj, res);
     }
 
+
+    public async saveNewAddedUserData(req, res, next, dto, result ) {
+        let responseObj = null
+        const tokenData = this.createToken(result);
+        let token: ITokenModel = req.app.locals.token({ _userId: result._id, token: tokenData.token });
+        await token.save().then(output => {
+            if (output) {
+                this.sendMail(req, res, next, dto.email, output.token, "confirmation");
+                responseObj = new BasicResponse(Status.CREATED, { token: tokenData.token, id: result._id, msg: `A verification email has been sent to ${ result.secret.email }` });
+                return next();
+            } else {
+                responseObj = new BasicResponse(Status.UNPROCESSABLE_ENTRY, { msg: "Could not generate token" })
+            }
+        });
+        this.sendResponse(responseObj, res);
+    }
+
+    
+
     public async sendMail(req: Request, res: Response, next: NextFunction, email, data, midpath) {
         SGmail.setApiKey(process.env.SEND_GRID_KEY);
         const msg = {
@@ -86,6 +106,7 @@ export class AuthService extends BaseService {
         };
         SGmail.send(msg);
     }
+
 
     @handleException()
     public async confirmUser(req: Request, res: Response, next: NextFunction) {
@@ -98,6 +119,7 @@ export class AuthService extends BaseService {
         }
         await this.processUserVerificationRequest(req, res, next, dto)
     }
+
 
     public async processUserVerificationRequest(req, res, next, dto) {
         await req.app.locals.token.findOne({ token: dto.token }).then(async token => {
@@ -236,9 +258,42 @@ export class AuthService extends BaseService {
         } else {
             responseObj = new BasicResponse(Status.FAILED_VALIDATION, { msg: 'email or password is incorrect' });
         }
+        this.sendResponse(responseObj, res);
+    }
+    
+
+    @handleException()
+    public async addNewUserToTenant( req: Request, res: Response, next: NextFunction, userId: string, managementId: string) {
+        const { firstName, lastName, email, password, role } = req.body;
+        let dto = new RegisterUserDTO(firstName, lastName, email, password, role);
+
+        let errors = await this.validateNewAddedUserDetails(dto, req, managementId);
+        if (this.hasErrors(errors)) {
+        this.sendResponse( new BasicResponse(Status.FAILED_VALIDATION, errors), res);
+        return next();
+        }
+
+        await this.saveNewUserDataToTenant(req, res, next, userId, managementId, dto);
+    }
+
+
+    async saveNewUserDataToTenant(req: Request,res: Response, next: NextFunction, userId: string, managementId: string, dto: RegisterUserDTO) {
+        let responseObj = null;
+        let {firstName, lastName, email, password, role } = dto;
+        const secret = { firstName, lastName, email, password, }
+        let register: IRegisterModel = req.app.locals.register({ secret, role, userId, managementId, nameHash: this.sha256(name)});
+        await register.save().then(async result => {
+            if (result) {
+                await this.saveNewAddedUserData(req, res, next, dto, result)
+            } else {
+                responseObj = new BasicResponse(Status.FAILED_VALIDATION);
+            }
+        }).catch(err => {
+            responseObj = new BasicResponse(Status.ERROR, err);
+        });
 
         this.sendResponse(responseObj, res);
-
+    
     }
     
 
@@ -258,13 +313,29 @@ export class AuthService extends BaseService {
         if (this.hasErrors(errors)) {
             return errors;
         }
-        // await req.app.locals.register.find({ emailHash: this.sha256(dto.email.toLowerCase()) }).then(result => {
-        //     if (result && result[0] && result[0]._id && result[0]._id != req.params.id) {
-        //         errors.push(this.getDuplicateEmailError(dto.email.toLowerCase()));
-        //     } else if (result && result[0] && result[0]._id && !req.params.id) {
-        //         errors.push(this.getDuplicateEmailError(dto.email.toLowerCase()));
-        //     }
-        // });j
+        await req.app.locals.register.find({ emailHash: this.sha256(dto.email.toLowerCase()) }).then(result => {
+            if (result && result[0] && result[0]._id && result[0]._id != req.params.id) {
+                errors.push(this.getDuplicateEmailError(dto.email.toLowerCase()));
+            } else if (result && result[0] && result[0]._id && !req.params.id) {
+                errors.push(this.getDuplicateEmailError(dto.email.toLowerCase()));
+            }
+        });
+
+        return errors;
+    }
+
+    async validateNewAddedUserDetails(dto: RegisterUserDTO, req: Request, managementId: string) {
+        let errors = validateSync(dto, { validationError: { target: false } });
+        if (this.hasErrors(errors)) {
+            return errors;
+        }
+        await req.app.locals.register.find({ emailHash: this.sha256(dto.email.toLowerCase()), managementId }).then(result => {
+            if (result && result[0] && result[0]._id && result[0]._id != req.params.id) {
+                errors.push(this.getDuplicateEmailError(dto.email.toLowerCase()));
+            } else if (result && result[0] && result[0]._id && !req.params.id) {
+                errors.push(this.getDuplicateEmailError(dto.email.toLowerCase()));
+            }
+        });
 
         return errors;
     }

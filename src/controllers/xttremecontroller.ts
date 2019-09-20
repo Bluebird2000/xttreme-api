@@ -12,6 +12,7 @@ export class XttremeInventoryController extends BaseController {
     this.resetPassword(prefix, router);
     this.sendResetPasswordLink(prefix, router);
     this.loginUser(prefix, router);
+    this.addNewUserToTenant(prefix, router);
     this.createInventoryCategory(prefix, router);
     this.listInventoryCategories(prefix, router);
     this.getCategoryById(prefix, router);
@@ -72,6 +73,11 @@ export class XttremeInventoryController extends BaseController {
     });
   }
 
+  public addNewUserToTenant(prefix: String, router: Router): any {
+    router.post(prefix + "/auth/add/user", (req: Request, res: Response, next: NextFunction) => {
+      new AuthService().addNewUserToTenant(req, res, next, this.user_id, this.user_managementId)
+    });
+  }
 
   public createInventoryCategory(prefix: String, router: Router): any {
     router.post(prefix + "/category", [this.authorize.bind(this)], (req: Request, res: Response, next: NextFunction) => {
