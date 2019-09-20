@@ -19,6 +19,7 @@ export class XttremeInventoryController extends BaseController {
     this.updateCategoryById(prefix, router);
     this.addNewItem(prefix, router);
     this.listItems(prefix, router);
+    this.getItemById(prefix, router);
     this.updateItemById(prefix, router);
     this.approveItem(prefix, router);
     this.listRoles(prefix, router);
@@ -121,11 +122,18 @@ export class XttremeInventoryController extends BaseController {
 
 
   public listItems(prefix: String, router: Router): any {
-    router.get(prefix + "/item", [this.authorize.bind(this)], (req: Request, res: Response, next: NextFunction) => { new ItemService().listItems( req, res, next, this.user_id,this.user_managementId
+    router.get(prefix + "/item", [this.authorize.bind(this)], (req: Request, res: Response, next: NextFunction) => { new ItemService().listItems( req, res, next, this.user_id, this.user_managementId
         );
       }
     );
   }
+
+  public getItemById(prefix: String, router: Router): any {
+    router.get(prefix + "/item/:id", [this.authorize.bind(this)], (req: Request, res: Response, next: NextFunction) => { new ItemService().getItemById( req, res, next, this.user_id, this.user_managementId
+        );
+      }
+    );
+  } 
 
   public updateItemById(prefix: String, router: Router): any {
     router.put( prefix + "/item/:id", [this.authorize.bind(this)], (req: Request, res: Response, next: NextFunction) => { new ItemService().updateItemById( req, res, next, this.user_id, this.user_managementId
