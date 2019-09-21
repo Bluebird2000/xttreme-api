@@ -24,6 +24,7 @@ export class XttremeInventoryController extends BaseController {
     this.updateItemById(prefix, router);
     this.approveItem(prefix, router);
     this.listRoles(prefix, router);
+    this.listAuditTrail(prefix, router);
   }
 
 
