@@ -17,7 +17,7 @@ import uuid = require('uuid');
 import { compareSync, hashSync } from "bcrypt-nodejs";
 import { ITokenModel } from '../models/token';
 import SGmail = require('@sendgrid/mail');
-import { trailNewRecord } from "../aspects/historytrail";
+import { trailNewRecord, singleList } from "../aspects/historytrail";
 const baseUrl = process.env.BASE_URL;
 
 export class AuthService extends BaseService {
@@ -295,6 +295,10 @@ export class AuthService extends BaseService {
         this.sendResponse(responseObj, res);
     
     }
+
+    @singleList('register')
+    public async listUsersUnderManagement(req: Request, res: Response, next: NextFunction, userId: string, managementId: string)
+     { }
     
 
     getTwoRandomAlphabeticStrAsManagementIdentifiers(){
