@@ -137,6 +137,64 @@ export const simpleList = (schemaName: string): any =>
   });
 
 
+
+
+  export const singleListUtil = (schemaName: string): any =>
+  afterMethod(async meta => {
+    let request = meta.args[0];
+    let response = meta.args[1];
+    let next = meta.args[2];
+
+    // const managementId = request.app.locals.userobj.managementId;
+
+    let offset = request.query.offset;
+    let limit = request.query.limit;
+
+    if (isMissing(offset) || isNotANumber(offset)) {
+      offset = 0;
+    }
+
+    if (isMissing(limit) || isNotANumber(limit)) {
+      limit = 50;
+    }
+
+    let skip = offset * limit;
+    let count = 0;
+    await request.app.locals[schemaName]
+      .count({ managementId: request.params.id })
+      .then(result => {
+        count = result;
+      });
+
+    let base;
+      base = request.app.locals[schemaName].findOne({ managementId: request.params.id })
+    base
+      .skip(skip) 
+      .limit(parseInt(limit))
+      .sort([['createdAt', -1]])
+      .then(result => {
+        if (!result) {
+          sendResponse(new BasicResponse(Status.NOT_FOUND), response);
+          return next();
+        }else if(result.length === 0) {
+          sendResponse(new BasicResponse(Status.NOT_FOUND), response);
+        return next();
+        } else {
+          sendResponse(
+            new BasicResponse(Status.SUCCESS, result),
+            response
+          );
+          return next();
+        }
+      })
+      .catch(err => {
+        sendResponse(new BasicResponse(Status.NOT_FOUND), response);
+        return next();
+      });
+  });
+
+
+
 export const list = (schemaName: string): any =>
   afterMethod(async meta => {
     let request = meta.args[0];

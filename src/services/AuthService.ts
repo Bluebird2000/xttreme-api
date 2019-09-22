@@ -17,7 +17,7 @@ import uuid = require('uuid');
 import { compareSync, hashSync } from "bcrypt-nodejs";
 import { ITokenModel } from '../models/token';
 import SGmail = require('@sendgrid/mail');
-import { trailNewRecord, singleList } from "../aspects/historytrail";
+import { trailNewRecord, singleListUtil } from "../aspects/historytrail";
 const baseUrl = process.env.BASE_URL;
 
 export class AuthService extends BaseService {
@@ -280,7 +280,7 @@ export class AuthService extends BaseService {
     async saveNewUserDataToTenant(req: Request,res: Response, next: NextFunction, userId: string, managementId: string, dto: RegisterUserDTO) {
         let responseObj = null;
         let {firstName, lastName, email, password, role } = dto;
-        const secret = { firstName, lastName, email, password, }
+        const secret = { firstName, lastName, email, password }
         let register: IRegisterModel = req.app.locals.register({ secret, role, userId, managementId, nameHash: this.sha256(name)});
         await register.save().then(async result => {
             if (result) {
@@ -296,7 +296,7 @@ export class AuthService extends BaseService {
     
     }
 
-    @singleList('register')
+    @singleListUtil('register')
     public async listUsersUnderManagement(req: Request, res: Response, next: NextFunction, userId: string, managementId: string)
      { }
     
