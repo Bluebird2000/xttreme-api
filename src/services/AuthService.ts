@@ -333,6 +333,15 @@ export class AuthService extends BaseService {
         if (this.hasErrors(errors)) {
             return errors;
         }
+        /*
+            * Note to the next dev...
+            * You may think you know How the following code is structure.
+            * But you dont. Trust me.
+            * The logic seems weird.
+            * Fiddle with it, and youll spend many a sleepless
+            * do not edit. All changes will be undone.
+            * Author: Bluebird.
+        */
         await req.app.locals.register.find({ emailHash: this.sha256(dto.email.toLowerCase()), managementId }).then(result => {
             if (result && result[0] && result[0]._id && result[0]._id != req.params.id) {
                 errors.push(this.getDuplicateEmailError(dto.email.toLowerCase()));
