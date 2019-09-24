@@ -143,6 +143,7 @@ export const simpleList = (schemaName: string): any =>
   afterMethod(async meta => {
     let request = meta.args[0];
     let response = meta.args[1];
+    let managementId = meta.args[4];
     let next = meta.args[2];
 
     // const managementId = request.app.locals.userobj.managementId;
@@ -161,13 +162,13 @@ export const simpleList = (schemaName: string): any =>
     let skip = offset * limit;
     let count = 0;
     await request.app.locals[schemaName]
-      .count({ managementId: request.params.id })
+      .count({ managementId: managementId })
       .then(result => {
         count = result;
       });
 
     let base;
-      base = request.app.locals[schemaName].findOne({ managementId: request.params.id })
+      base = request.app.locals[schemaName].findOne({ managementId })
     base
       .skip(skip) 
       .limit(parseInt(limit))
