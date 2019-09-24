@@ -80,15 +80,14 @@ export class XttremeInventoryController extends BaseController {
 
   public addNewUserToTenant(prefix: String, router: Router): any {
     router.post(prefix + "/auth/add/user", (req: Request, res: Response, next: NextFunction) => {
-      new AuthService().addNewUserToTenant(req, res, next, this.user_id, this.user_managementId)
+      new AuthService().addNewUserToTenant(req, res, next, this.user_id, this.user_managementId);
     });
   }
 
   public listUsersUnderManagement(prefix: String, router: Router): any {
-    router.get(prefix + "/auth/user/management/:id", [this.authorize.bind(this)], (req: Request, res: Response, next: NextFunction) => { new AuthService().listUsersUnderManagement( req, res, next, this.user_id, this.user_managementId
-        );
-      }
-    );
+    router.get(prefix + "/auth/user/management", [this.authorize.bind(this)], (req: Request, res: Response, next: NextFunction) => { 
+      new AuthService().listUsersUnderManagement( req, res, next, this.user_id, this.user_managementId);
+    });
   }
 
   public createInventoryCategory(prefix: String, router: Router): any {
