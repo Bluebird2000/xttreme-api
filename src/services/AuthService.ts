@@ -17,7 +17,7 @@ import uuid = require('uuid');
 import { compareSync, hashSync } from "bcrypt-nodejs";
 import { ITokenModel } from '../models/token';
 import SGmail = require('@sendgrid/mail');
-import { trailNewRecord, singleListUtil } from "../aspects/historytrail";
+import { trailNewRecord, listUtil } from "../aspects/historytrail";
 const baseUrl = process.env.BASE_URL;
 
 export class AuthService extends BaseService {
@@ -296,7 +296,7 @@ export class AuthService extends BaseService {
     
     }
 
-    @singleListUtil('register')
+    @listUtil('register')
     public async listUsersUnderManagement(req: Request, res: Response, next: NextFunction, userId: string, managementId: string)
      { }
     

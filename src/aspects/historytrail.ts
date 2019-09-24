@@ -139,7 +139,7 @@ export const simpleList = (schemaName: string): any =>
 
 
 
-  export const singleListUtil = (schemaName: string): any =>
+  export const listUtil = (schemaName: string): any =>
   afterMethod(async meta => {
     let request = meta.args[0];
     let response = meta.args[1];
@@ -168,7 +168,7 @@ export const simpleList = (schemaName: string): any =>
       });
 
     let base;
-      base = request.app.locals[schemaName].findOne({ managementId })
+      base = request.app.locals[schemaName].find({ managementId })
     base
       .skip(skip) 
       .limit(parseInt(limit))
