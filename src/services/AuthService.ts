@@ -279,9 +279,11 @@ export class AuthService extends BaseService {
 
     async saveNewUserDataToTenant(req: Request,res: Response, next: NextFunction, userId: string, managementId: string, dto: RegisterUserDTO) {
         let responseObj = null;
+        let isVerified;
         let {firstName, lastName, email, password, role } = dto;
-        const secret = { firstName, lastName, email, password }
-        let register: IRegisterModel = req.app.locals.register({ secret, role, userId, managementId, nameHash: this.sha256(name)});
+        const secret = { firstName, lastName, email, password };
+        isVerified = true
+        let register: IRegisterModel = req.app.locals.register({ secret, role, userId, isVerified, managementId, nameHash: this.sha256(name)});
         await register.save().then(async result => {
             if (result) {
                 await this.saveNewAddedUserData(req, res, next, dto, result)
@@ -335,7 +337,7 @@ export class AuthService extends BaseService {
         }
         /*
             * Note to the next dev...
-            * You may think you know How the following code is structure.
+            * You may think you know what the following code does.
             * But you dont. Trust me.
             * The logic seems weird.
             * Fiddle with it, and youll spend many a sleepless
