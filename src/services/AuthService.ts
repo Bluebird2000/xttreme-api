@@ -15,7 +15,7 @@ import uuid = require('uuid');
 import { compareSync, hashSync } from "bcrypt-nodejs";
 import { ITokenModel } from '../models/token';
 import SGmail = require('@sendgrid/mail');
-import { trailNewRecord, listUtil } from "../aspects/historytrail";
+import { listUtil } from "../aspects/historytrail";
 const baseUrl = process.env.BASE_URL;
 
 export class AuthService extends BaseService {
