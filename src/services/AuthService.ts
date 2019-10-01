@@ -280,7 +280,7 @@ export class AuthService extends BaseService {
         let isVerified;
         let {firstName, lastName, email, password, role } = dto;
         const secret = { firstName, lastName, email, password };
-        isVerified = true
+        isVerified = true;
         let register: IRegisterModel = req.app.locals.register({ secret, role, userId, isVerified, managementId, nameHash: this.sha256(name)});
         await register.save().then(async result => {
             if (result) {
