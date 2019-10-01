@@ -1,5 +1,3 @@
-import * as pug from 'pug';
-import htmlToText from 'html-to-text';
 import { BaseService } from "./BaseService";
 import { BasicResponse } from "../dto/output/basicresponse";
 import { Status } from '../dto/enums/statusenum';
