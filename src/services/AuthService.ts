@@ -93,7 +93,6 @@ export class AuthService extends BaseService {
     }
 
     
-
     public async sendMail(req: Request, res: Response, next: NextFunction, email, data, midpath) {
         SGmail.setApiKey(process.env.SEND_GRID_KEY);
         const msg = {
@@ -151,7 +150,6 @@ export class AuthService extends BaseService {
             return next();
         }
         await this.resendToken(req, res, next, dto)
-
     }
 
     public async resendToken(req, res, next, dto) {
@@ -165,9 +163,7 @@ export class AuthService extends BaseService {
                 this.sendMail(req, res, next, dto.email, result.token, "confirmation")
                 this.sendResponse(new BasicResponse(Status.SUCCESS, { token: tokenData.token, msg: `A verification email has been sent to ${ user.secret.email }`}), res);
                 return next();
-
             })
-
         })
     }
     
@@ -195,7 +191,6 @@ export class AuthService extends BaseService {
                 this.sendResponse(new BasicResponse(Status.SUCCESS, { msg: "You have successfully changed your password" }), res);
                 return next();
             })
-
         })
     }
 
@@ -214,9 +209,7 @@ export class AuthService extends BaseService {
             if (user && !user.isVerified) return this.sendResponse(new BasicResponse(Status.PRECONDITION_FAILED, { msg: 'Check your mail or resend activation link to activate your account.' }), res);
             this.sendMail(req, res, next, dto.email, user._id, "reset-password")
             this.sendResponse(new BasicResponse(Status.SUCCESS, { msg: "The reset password link has been sent to your email" }), res);
-
-        })
-
+        });
     }
 
 
@@ -233,9 +226,7 @@ export class AuthService extends BaseService {
         await req.app.locals.register.findOne({ emailHash: this.sha256(dto.username.toLowerCase()) }).then(async result => {
             if (result) {
                 await this.processUserLoginAction(res, next, dto, result);
-            } else {
-                responseObj = new BasicResponse(Status.FAILED_VALIDATION, { msg: 'email does not exist' });
-            }
+            } else responseObj = new BasicResponse(Status.FAILED_VALIDATION, { msg: 'email does not exist' });
         }).catch(err => {
             responseObj = new BasicResponse(Status.ERROR, err);
         });
@@ -253,9 +244,8 @@ export class AuthService extends BaseService {
                 const tokenData = this.createToken(result);
                 responseObj = new BasicResponse(Status.SUCCESS, { result, tokenData });
             }
-        } else {
-            responseObj = new BasicResponse(Status.FAILED_VALIDATION, { msg: 'email or password is incorrect' });
-        }
+        } else responseObj = new BasicResponse(Status.FAILED_VALIDATION, { msg: 'email or password is incorrect' });
+        
         this.sendResponse(responseObj, res);
     }
     
@@ -285,9 +275,8 @@ export class AuthService extends BaseService {
         await register.save().then(async result => {
             if (result) {
                 await this.saveNewAddedUserData(req, res, next, dto, result)
-            } else {
-                responseObj = new BasicResponse(Status.FAILED_VALIDATION);
-            }
+            } else  responseObj = new BasicResponse(Status.FAILED_VALIDATION);
+            
         }).catch(err => {
             responseObj = new BasicResponse(Status.ERROR, err);
         });
@@ -333,15 +322,6 @@ export class AuthService extends BaseService {
         if (this.hasErrors(errors)) {
             return errors;
         }
-        /*
-            * Note to the next dev...
-            * You may think you know what the following code does.
-            * But you dont. Trust me.
-            * The logic seems weird.
-            * Fiddle with it, and youll spend many a sleepless
-            * do not edit. All changes will be undone.
-            * Author: Bluebird.
-        */
         await req.app.locals.register.find({ emailHash: this.sha256(dto.email.toLowerCase()), managementId }).then(result => {
             if (result && result[0] && result[0]._id && result[0]._id != req.params.id) {
                 errors.push(this.getDuplicateEmailError(dto.email.toLowerCase()));
@@ -352,7 +332,6 @@ export class AuthService extends BaseService {
 
         return errors;
     }
-
 
     hasErrors(errors) {
         return !(errors === undefined || errors.length == 0);
