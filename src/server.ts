@@ -36,8 +36,6 @@ import { itemSchema } from './schemas/item';
 import { activitySchema } from "./schemas/activity";
 
 
-
-
 /**
  * The server.
  *
