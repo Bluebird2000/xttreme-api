@@ -79,7 +79,7 @@ export class XttremeInventoryController extends BaseController {
 
 
   public addNewUserToTenant(prefix: String, router: Router): any {
-    router.post(prefix + "/auth/add/user", (req: Request, res: Response, next: NextFunction) => {
+    router.post(prefix + "/auth/add/user", [this.authorize.bind(this)], (req: Request, res: Response, next: NextFunction) => {
       new AuthService().addNewUserToTenant(req, res, next, this.user_id, this.user_managementId);
     });
   }
