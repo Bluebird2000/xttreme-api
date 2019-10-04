@@ -75,23 +75,6 @@ export class AuthService extends BaseService {
         this.sendResponse(responseObj, res);
     }
 
-
-    public async saveNewAddedUserData(req, res, next, dto, result ) {
-        let responseObj = null
-        const tokenData = this.createToken(result);
-        let token: ITokenModel = req.app.locals.token({ _userId: result._id, token: tokenData.token });
-        await token.save().then(output => {
-            if (output) {
-                this.sendMail(req, res, next, dto.email, output.token, "confirmation");
-                responseObj = new BasicResponse(Status.CREATED, { token: tokenData.token, id: result._id, msg: `A verification email has been sent to ${ result.secret.email }` });
-                return next();
-            } else {
-                responseObj = new BasicResponse(Status.UNPROCESSABLE_ENTRY, { msg: "Could not generate token" })
-            }
-        });
-        this.sendResponse(responseObj, res);
-    }
-
     
     public async sendMail(req: Request, res: Response, next: NextFunction, email, data, midpath) {
         SGmail.setApiKey(process.env.SEND_GRID_KEY);
@@ -271,10 +254,11 @@ export class AuthService extends BaseService {
         let {firstName, lastName, email, password, role } = dto;
         const secret = { firstName, lastName, email, password };
         isVerified = true;
-        let register: IRegisterModel = req.app.locals.register({ secret, role, userId, isVerified, managementId, nameHash: this.sha256(name)});
+        let register: IRegisterModel = req.app.locals.register({ secret, role, isVerified, emailHash: this.sha256(email), userId, managementId });
         await register.save().then(async result => {
             if (result) {
-                await this.saveNewAddedUserData(req, res, next, dto, result)
+                console.log(222, result);
+                responseObj = new BasicResponse(Status.CREATED, { result });
             } else  responseObj = new BasicResponse(Status.FAILED_VALIDATION);
             
         }).catch(err => {
@@ -283,6 +267,22 @@ export class AuthService extends BaseService {
 
         this.sendResponse(responseObj, res);
     
+    }
+
+    public async saveNewAddedUserData(req, res, next, dto, result ) {
+        let responseObj = null
+        const tokenData = this.createToken(result);
+        let token: ITokenModel = req.app.locals.token({ _userId: result._id, token: tokenData.token });
+        await token.save().then(output => {
+            if (output) {
+                this.sendMail(req, res, next, dto.email, output.token, "confirmation");
+                responseObj = new BasicResponse(Status.CREATED, { token: tokenData.token, id: result._id, msg: `A verification email has been sent to ${ result.secret.email }` });
+                return next();
+            } else {
+                responseObj = new BasicResponse(Status.UNPROCESSABLE_ENTRY, { msg: "Could not generate token" })
+            }
+        });
+        this.sendResponse(responseObj, res);
     }
 
     @listUtil('register')
