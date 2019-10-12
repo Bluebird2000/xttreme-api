@@ -138,6 +138,7 @@ export class XttremeInventoryController extends BaseController {
     );
   }
 
+  
   public getItemById(prefix: String, router: Router): any {
     router.get(prefix + "/item/:id", [this.authorize.bind(this)], (req: Request, res: Response, next: NextFunction) => { new ItemService().getItemById( req, res, next, this.user_id, this.user_managementId
         );
