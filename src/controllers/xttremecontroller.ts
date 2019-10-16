@@ -93,49 +93,43 @@ export class XttremeInventoryController extends BaseController {
   public createInventoryCategory(prefix: String, router: Router): any {
     router.post(prefix + "/category", [this.authorize.bind(this)], (req: Request, res: Response, next: NextFunction) => {
         new CategoryService().createInventoryCategory(req, res, next, this.user_id, this.user_managementId
-        );
-      }
-    );
+      );
+    });
   }
 
 
   public listInventoryCategories(prefix: String, router: Router): any {
     router.get(prefix + "/category", [this.authorize.bind(this)], (req: Request, res: Response, next: NextFunction) => { new CategoryService().listInventoryCategories( req, res, next, this.user_id,this.user_managementId
-        );
-      }
-    );
+      );
+    });
   }
 
 
   public getCategoryById(prefix: String, router: Router): any {
     router.get(prefix + "/category/:id", [this.authorize.bind(this)], (req: Request, res: Response, next: NextFunction) => { new CategoryService().getCategoryById( req, res, next, this.user_id,this.user_managementId
-        );
-      }
-    );
+      );
+    });
   } 
 
 
   public updateCategoryById(prefix: String, router: Router): any {
     router.put( prefix + "/category/:id", [this.authorize.bind(this)], (req: Request, res: Response, next: NextFunction) => { new CategoryService().updateCategoryById( req, res, next, this.user_id,this.user_managementId
-        );
-      }
-    );
+      );
+    });
   } 
 
 
   public addNewItem(prefix: String, router: Router): any {
     router.post(prefix + "/item", [this.authorize.bind(this)], (req: Request, res: Response, next: NextFunction) => { new ItemService().addNewItem(req, res, next, this.user_id, this.user_managementId
-        );
-      }
-    );
+      );
+    });
   }
 
 
   public listItems(prefix: String, router: Router): any {
     router.get(prefix + "/item", [this.authorize.bind(this)], (req: Request, res: Response, next: NextFunction) => { new ItemService().listItems( req, res, next, this.user_id, this.user_managementId
-        );
-      }
-    );
+      );
+    });
   }
 
   
