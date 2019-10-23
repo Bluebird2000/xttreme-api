@@ -140,12 +140,14 @@ export class XttremeInventoryController extends BaseController {
     );
   } 
 
+
   public updateItemById(prefix: String, router: Router): any {
     router.put( prefix + "/item/:id", [this.authorize.bind(this)], (req: Request, res: Response, next: NextFunction) => { new ItemService().updateItemById( req, res, next, this.user_id, this.user_managementId
         );
       }
     );
   } 
+  
 
   public approveItem(prefix: String, router: Router): any {
     router.patch( prefix + "/item/approve/:id", [this.authorize.bind(this)], (req: Request, res: Response, next: NextFunction) => { new ItemService().approveItem( req, res, next, this.user_id, this.user_managementId
