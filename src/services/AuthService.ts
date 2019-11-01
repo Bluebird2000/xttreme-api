@@ -123,6 +123,7 @@ export class AuthService extends BaseService {
         })
     }
 
+
     @handleException()
     public async resendEmailConfirmationLink(req: Request, res: Response, next: NextFunction) {
         const { email } = req.body;
@@ -134,6 +135,7 @@ export class AuthService extends BaseService {
         }
         await this.resendToken(req, res, next, dto)
     }
+
 
     public async resendToken(req, res, next, dto) {
         await req.app.locals.register.findOne({ emailHash: this.sha256(dto.email.toLowerCase()) }).then(async user => {
@@ -176,6 +178,7 @@ export class AuthService extends BaseService {
             })
         })
     }
+    
 
     @handleException()
     public async sendResetPasswordLink(req: Request, res: Response, next: NextFunction) {
