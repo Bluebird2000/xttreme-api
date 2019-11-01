@@ -146,8 +146,6 @@ export const simpleList = (schemaName: string): any =>
     let managementId = meta.args[4];
     let next = meta.args[2];
 
-    // const managementId = request.app.locals.userobj.managementId;
-
     let offset = request.query.offset;
     let limit = request.query.limit;
 
