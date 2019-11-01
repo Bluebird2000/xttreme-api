@@ -41,6 +41,7 @@ export class ItemService extends BaseService {
   public async listItems(req: Request, res: Response, next: NextFunction, userId: string, managementId: string)
   { }
 
+  
   @singleList('item')
   public async getItemById(req: Request, res: Response, next: NextFunction, userId: string, managementId: string)
    { }
